@@ -1,26 +1,6 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
-struct SLOT_E
-{
-  enum Type
-  {
-    AMMUNITION = 0,
-    BODY = 1,
-    CAPE = 2,
-    FEET = 3,
-    HAND = 4,
-    HEAD = 5,
-    LEGS = 6,
-    NECK = 7,
-    RING = 8,
-    SHIELD = 9,
-    TWOHANDED = 10,
-    WEAPON = 11,
-    SIZE_OF_SLOTS_E = 12
-  };
-};
-
 struct POTIONS_E
 {
   enum Type
@@ -78,7 +58,7 @@ struct STRENGTH_PRAYER_E
   };
 };
 
-struct DEFENSE_PRAYER_E
+struct DEFENCE_PRAYER_E
 {
   enum Type
   {
@@ -88,7 +68,7 @@ struct DEFENSE_PRAYER_E
     STEEL_SKIN = 3,
     CHIVALRY = 4,
     PIETY = 5,
-    SIZE_OF_DEFENSE_PRAYER_E = 6
+    SIZE_OF_DEFENCE_PRAYER_E = 6
   };
 };
 

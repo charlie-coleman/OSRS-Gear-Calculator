@@ -2,34 +2,34 @@
 
 Equipment::Equipment()
 {
-  m_slot = SLOT_E::AMMUNITION;
+  m_name = "";
   m_stats = {0};
 }
 
-Equipment::Equipment(std::string i_name, SLOT_E::Type i_slot, EQUIPMENT_STATS_T i_stats)
+Equipment::Equipment(std::string i_name, int i_id, EQUIPMENT_STATS_T i_stats)
 {
   m_name = i_name;
-  m_slot = i_slot;
+  m_id = i_id;
   m_stats = i_stats;
 }
 
-Equipment::Equipment(std::string i_name, SLOT_E::Type i_slot, TYPE_BONUSES_T i_attackBonuses, TYPE_BONUSES_T i_defenseBonuses, OTHER_BONUSES_T i_otherBonuses)
+Equipment::Equipment(std::string i_name, int i_id, TYPE_BONUSES_T i_attackBonuses, TYPE_BONUSES_T i_defenceBonuses, OTHER_BONUSES_T i_otherBonuses)
 {
   m_name = i_name;
-  m_slot = i_slot;
+  m_id = i_id;
   m_stats = {0};
 
   m_stats.AttackBonuses = i_attackBonuses;
-  m_stats.DefenseBonuses = i_defenseBonuses;
+  m_stats.DefenceBonuses = i_defenceBonuses;
   m_stats.OtherBonuses = i_otherBonuses;
 }
 
-Equipment::Equipment(std::string i_name, SLOT_E::Type i_slot, int i_stabAttack, int i_slashAttack, int i_crushAttack, int i_rangedAttack, int i_magicAttack,
-                     int i_stabDefense, int i_slashDefense, int i_crushDefense, int i_rangedDefense, int i_magicDefense,
+Equipment::Equipment(std::string i_name, int i_id, int i_stabAttack, int i_slashAttack, int i_crushAttack, int i_rangedAttack, int i_magicAttack,
+                     int i_stabDefence, int i_slashDefence, int i_crushDefence, int i_rangedDefence, int i_magicDefence,
                      int i_strength, int i_rangedStrength, int i_magicDamage, int i_prayer)
 {
   m_name = i_name;
-  m_slot = i_slot;
+  m_id = i_id;
   m_stats = {0};
 
   m_stats.AttackBonuses.Stab = i_stabAttack;
@@ -38,11 +38,11 @@ Equipment::Equipment(std::string i_name, SLOT_E::Type i_slot, int i_stabAttack, 
   m_stats.AttackBonuses.Magic = i_magicAttack;
   m_stats.AttackBonuses.Ranged = i_rangedAttack;
 
-  m_stats.DefenseBonuses.Stab = i_stabDefense;
-  m_stats.DefenseBonuses.Slash = i_slashDefense;
-  m_stats.DefenseBonuses.Crush = i_crushDefense;
-  m_stats.DefenseBonuses.Magic = i_magicDefense;
-  m_stats.DefenseBonuses.Ranged = i_rangedDefense;
+  m_stats.DefenceBonuses.Stab = i_stabDefence;
+  m_stats.DefenceBonuses.Slash = i_slashDefence;
+  m_stats.DefenceBonuses.Crush = i_crushDefence;
+  m_stats.DefenceBonuses.Magic = i_magicDefence;
+  m_stats.DefenceBonuses.Ranged = i_rangedDefence;
 
   m_stats.OtherBonuses.Strength = i_strength;
   m_stats.OtherBonuses.RangedStrength = i_rangedStrength;
@@ -59,9 +59,9 @@ void Equipment::SetName(std::string i_name)
   m_name = i_name;
 }
 
-void Equipment::SetSlot(SLOT_E::Type i_slot)
+void Equipment::SetId(int i_id)
 {
-  m_slot = i_slot;
+  m_id = i_id;
 }
 
 void Equipment::SetAttackBonuses(TYPE_BONUSES_T i_attackBonuses)
@@ -78,18 +78,18 @@ void Equipment::SetAttackBonuses(int i_stab, int i_slash, int i_crush, int i_mag
   m_stats.AttackBonuses.Ranged = i_ranged;
 }
 
-void Equipment::SetDefenseBonuses(TYPE_BONUSES_T i_defenseBonuses)
+void Equipment::SetDefenceBonuses(TYPE_BONUSES_T i_defenceBonuses)
 {
-  m_stats.DefenseBonuses = i_defenseBonuses;
+  m_stats.DefenceBonuses = i_defenceBonuses;
 }
 
-void Equipment::SetDefenseBonuses(int i_stab, int i_slash, int i_crush, int i_magic, int i_ranged)
+void Equipment::SetDefenceBonuses(int i_stab, int i_slash, int i_crush, int i_magic, int i_ranged)
 {
-  m_stats.DefenseBonuses.Stab = i_stab;
-  m_stats.DefenseBonuses.Slash = i_slash;
-  m_stats.DefenseBonuses.Crush = i_crush;
-  m_stats.DefenseBonuses.Magic = i_magic;
-  m_stats.DefenseBonuses.Ranged = i_ranged;
+  m_stats.DefenceBonuses.Stab = i_stab;
+  m_stats.DefenceBonuses.Slash = i_slash;
+  m_stats.DefenceBonuses.Crush = i_crush;
+  m_stats.DefenceBonuses.Magic = i_magic;
+  m_stats.DefenceBonuses.Ranged = i_ranged;
 }
 
 void Equipment::SetOtherBonuses(OTHER_BONUSES_T i_otherBonuses)
@@ -110,9 +110,9 @@ const std::string &Equipment::Name() const
   return m_name;
 }
 
-const SLOT_E::Type &Equipment::Slot() const
+const int& Equipment::Id() const
 {
-  return m_slot;
+  return m_id;
 }
 
 const EQUIPMENT_STATS_T &Equipment::Stats() const

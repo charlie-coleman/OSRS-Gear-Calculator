@@ -2,6 +2,8 @@
 #define TYPES_H
 
 #include "enums.h"
+#include <string>
+#include <vector>
 
 struct TYPE_BONUSES_T
 {
@@ -20,10 +22,25 @@ struct OTHER_BONUSES_T
   int Prayer;
 };
 
+struct STANCE_T
+{
+  std::string AttackStyle;
+  std::string AttackType;
+  std::string Boosts;
+  std::string CombatStyle;
+  std::string Experience;
+};
+
+struct WEAPON_STATS_T
+{
+  int AttackSpeed;
+  std::vector<STANCE_T> Stances;
+};
+
 struct EQUIPMENT_STATS_T
 {
   TYPE_BONUSES_T AttackBonuses;
-  TYPE_BONUSES_T DefenseBonuses;
+  TYPE_BONUSES_T DefenceBonuses;
   OTHER_BONUSES_T OtherBonuses;
 };
 
@@ -31,7 +48,7 @@ struct PLAYER_STATS_T
 {
   int Attack;
   int Strength;
-  int Defense;
+  int Defence;
   int Ranged;
   int RangedStrength;
   int Magic;
@@ -43,7 +60,7 @@ struct POTIONS_T
 {
   POTIONS_E::Type AttackPotion;
   POTIONS_E::Type StrengthPotion;
-  POTIONS_E::Type DefensePotion;
+  POTIONS_E::Type DefencePotion;
   POTIONS_E::Type RangedPotion;
   MAGIC_POTIONS_E::Type MagicPotion;
 };
@@ -52,9 +69,29 @@ struct PRAYER_T
 {
   ATTACK_PRAYER_E::Type AttackPrayer;
   STRENGTH_PRAYER_E::Type StrengthPrayer;
-  DEFENSE_PRAYER_E::Type DefensePrayer;
+  DEFENCE_PRAYER_E::Type DefencePrayer;
   RANGED_PRAYER_E::Type RangedPrayer;
   MAGIC_PRAYER_E::Type MagicPrayer;
+};
+
+struct MONSTER_COMBAT_STATS_T
+{
+  int Hitpoints;
+  int Attack;
+  int Strength;
+  int Defence;
+  int Magic;
+  int Ranged;
+  int Accuracy;
+  int Size;
+};
+
+struct MONSTER_STATS_T
+{
+  MONSTER_COMBAT_STATS_T CombatStats;
+  TYPE_BONUSES_T AttackBonuses;
+  TYPE_BONUSES_T DefensiveBonuses;
+  OTHER_BONUSES_T OtherBonuses;
 };
 
 #endif
