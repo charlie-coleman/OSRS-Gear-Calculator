@@ -39,6 +39,8 @@ public:
   const MONSTER_STATS_T& Stats() const;
   const std::vector<std::string>& Attributes() const;
 
+  bool HasAttribute(std::string);
+
 protected:
   std::string m_name;
   int m_id;

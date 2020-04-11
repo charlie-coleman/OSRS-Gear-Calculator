@@ -1,5 +1,7 @@
 #include "Monster.h"
 
+#include <iostream>
+
 Monster::Monster()
 {
   m_name = "";
@@ -90,6 +92,18 @@ Monster::Monster(std::string i_name, int i_id, int i_combatAttack,  int i_combat
                           i_meleeStrength, i_rangedStrength, i_magicDamage)
 {
   m_attributes = i_attributes;
+}
+
+bool Monster::HasAttribute(std::string i_attribute)
+{
+  for (auto it = m_attributes.begin(); it != m_attributes.end(); it++)
+  {
+    if (i_attribute.compare(*it) == 0)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 Monster::~Monster()

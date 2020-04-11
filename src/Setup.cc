@@ -99,29 +99,104 @@ int Setup::CalculateMeleeMaxHit()
 
   strengthBonus += weap.Stats().OtherBonuses.Strength;
 
-  float baseDamage = std::floor(0.5 + effectiveStrength * (64.0 + strengthBonus) / 640.0);
+  int baseDamage = std::floor(0.5 + effectiveStrength * (64.0 + strengthBonus) / 640.0);
 
-  float specialBonus = 1.0;
+  // FIRST ROUND OF SPECIAL MODIFIERS
+  // PICK ONE BONUS: Salve, Salve (e), or Black Mask
+  // Salve has priority over Black Mask
+
+  float firstBonus = 1.0;
+
+  bool isUndead = m_monster.HasAttribute("undead");
+  bool isDemon = m_monster.HasAttribute("demon");
+  bool isLeafy = m_monster.HasAttribute("leafy");
+  bool isShady = m_monster.HasAttribute("shade");
+  bool isKalphite = m_monster.HasAttribute("kalphite");
+
+  if (isUndead && (m_neckSlot.Id() == 4081 || m_neckSlot.Id() == 12017)) // Salve
+  {
+    firstBonus = 7.0/6.0;
+  }
+  else if (isUndead && (m_neckSlot.Id() == 10588 || m_neckSlot.Id() == 12018)) // Salve (e)
+  {
+    firstBonus = 1.2;
+  }
+  else if (m_onSlayerTask &&
+    ((m_headSlot.Id() >= 8901 && m_headSlot.Id() <= 8922) || // Black mask (10-0)
+     (m_headSlot.Id() >= 11774 && m_headSlot.Id() <= 11784) || // Blackmask (10-0) (i)
+     (m_headSlot.Id() == 11864 || m_headSlot.Id() == 11865) || // Reg Slayer helmet + (i)
+     (m_headSlot.Id() == 19639 || m_headSlot.Id() == 19641) || // Black Slayer helmet + (i)
+     (m_headSlot.Id() == 19643 || m_headSlot.Id() == 19645) || // Green Slayer helmet + (i)
+     (m_headSlot.Id() == 19647 || m_headSlot.Id() == 19649) || // Red Slayer helmet + (i)
+     (m_headSlot.Id() == 21264 || m_headSlot.Id() == 21266) || // Purple Slayer helmet + (i)
+     (m_headSlot.Id() == 21888 || m_headSlot.Id() == 21890) || // Turquoise Slayer helmet + (i)
+     (m_headSlot.Id() == 23073 || m_headSlot.Id() == 23075) || // Hydra Slayer helmet + (i)
+     (m_headSlot.Id() == 24370 || m_headSlot.Id() == 24444))) // Twisted Slayer helmet + (i)
+  {
+
+    std::cout << "on task in mask" << std::endl;
+    firstBonus = 7.0/6.0;
+  }
+
+  int firstBonusDamage = std::floor(firstBonus * baseDamage);
+
+  // SECOND ROUND OF SPECIAL MODIFIERS
+  // Not accounting for special attacks here, the main ones are Arclight, Leaf-bladed battleaxe, and obby armour + obby weapon
+
+  float secondBonus = 1.0;
+
+  if (weap.Id() == 19675 && isDemon) // if weapon == arclight and enemy is a demon
+  {
+    secondBonus = 1.70;
+  }
+  else if (weap.Id() == 20727 && isLeafy) // if weapon == leaf-bladed baxe and the enemy is "leafy"
+  {
+    secondBonus = 1.175;
+  }
+  else if ((weap.Id() == 6523 || weap.Id() == 6525 || weap.Id() == 6527 || weap.Id() == 6528) && // Obsidian melee weapon
+           (m_headSlot.Id() == 21298 && m_bodySlot.Id() == 21301 && m_legsSlot.Id() == 21304))   // Obsidian armour set
+  {
+    secondBonus = 1.10;
+  }
+
+  int secondBonusDamage = std::floor(secondBonus * firstBonusDamage);
+
+  // THIRD ROUND OF SPECIAL MODIFIERS
+  // Again, not accounting for special attacks here. Main items are darklight, dharok's, zerker neck
+
+  float thirdBonus = 1.0;
 
   if ((m_headSlot.Id() == 4716 || (m_headSlot.Id() >= 4880 && m_headSlot.Id() <= 4884)) && // Dharok's helm (100/75/50/25/0)
       (weap.Id()       == 4718 || (weap.Id()       >= 4886 && weap.Id()       <= 4890)) && // Dharok's greataxe (100/75/50/25/0)
       (m_bodySlot.Id() == 4720 || (m_bodySlot.Id() >= 4892 && m_bodySlot.Id() <= 4896)) && // Dharok's platebody (100/75/50/25/0)
       (m_legsSlot.Id() == 4722 || (m_legsSlot.Id() >= 4898 && m_legsSlot.Id() <= 4902)))   // Dharok's platelegs (100/75/50/25/0)
   {
-    int missingHitpoints = m_player.Stats().Hitpoints - m_currentHitpoints;
+    int maxHP = m_player.Stats().Hitpoints;
+
+    int missingHitpoints = maxHP - m_currentHitpoints;
     missingHitpoints = (missingHitpoints < 0) ? 0 : missingHitpoints;
-    specialBonus = 1.0 + (0.01 * missingHitpoints);
+    
+    thirdBonus = 1.0 + ((missingHitpoints / 100.0) * (maxHP / 100.0));
   }
-  else if (m_headSlot.Id() == 21298 && // Obsidian helmet
-           m_bodySlot.Id() == 21301 && // Obsidian platebody
-           m_legsSlot.Id() == 21304 && // Obsidian platelegs
-           (m_neckSlot.Id() == 11128 || m_neckSlot.Id() == 23240) && // Berserker necklace or Berserker necklace (or)
-           (weap.Id() == 6523 || weap.Id() == 6525 || weap.Id() == 6527 || weap.Id() == 6528)) // Obsidian weapons
+  else if ((weap.Id() == 6523 || weap.Id() == 6525 || weap.Id() == 6527 || weap.Id() == 6528) && // Obsidian weapons
+           (m_neckSlot.Id() == 11128 || m_neckSlot.Id() == 23240))                               // Berserker necklace or Berserker necklace (or)
   {
-    specialBonus = 1.3;
+    thirdBonus = 1.20;   
+  }
+  else if (weap.Id() == 6746 && isDemon) // if weapon == darklight and enemy is a demon
+  {
+    thirdBonus = 1.60;
+  }
+  else if (weap.Id() == 7668 && isShady) // if weapon == gadderhammer and enemy is a shade (morton)
+  {
+    thirdBonus = 1.25;
+  }
+  else if ((weap.Id() >= 10581 && weap.Id() <= 10584) && isKalphite) // if weapon == keris (p/p+/p++) and enemy is a kalphite creature
+  {
+    thirdBonus = 4.0/3.0;
   }
 
-  int maxHit = std::floor(baseDamage * specialBonus);
+  int maxHit = std::floor(thirdBonus * secondBonusDamage);
 
   return maxHit;
 }
@@ -174,6 +249,7 @@ int Setup::CalculateEffectiveMeleeStrength()
     case STRENGTH_PRAYER_E::NONE:
     default:
       prayerBonus = 1.0;
+      break;
   }
 
   float otherBonus = 1.0;
@@ -184,42 +260,6 @@ int Setup::CalculateEffectiveMeleeStrength()
       m_handSlot.Id() == 8842)    // Void knight gloves
   {
     otherBonus *= 1.1;
-  }
-
-  const std::vector<std::string> attrs = m_monster.Attributes();
-  bool isUndead = false;
-
-  for (int i = 0; i < attrs.size(); ++i)
-  {
-    if (attrs[i].compare("undead") == 0)
-    {
-      isUndead = true;
-      break;
-    }
-  }
-
-  if (isUndead && (m_neckSlot.Id() == 4081 || m_neckSlot.Id() == 12017))
-  {
-    otherBonus *= 1.15;
-  }
-  else if (isUndead && (m_neckSlot.Id() == 10588 || m_neckSlot.Id() == 12018))
-  {
-    otherBonus *= 1.2;
-  }
-  
-  if (m_onSlayerTask &&
-    ((m_headSlot.Id() >= 8901 && m_headSlot.Id() <= 8922) || // Black mask (10-0)
-     (m_headSlot.Id() >= 11774 && m_headSlot.Id() <= 11784) || // Blackmask (10-0) (i)
-     (m_headSlot.Id() == 11864 || m_headSlot.Id() == 11865) || // Reg Slayer helmet + (i)
-     (m_headSlot.Id() == 19639 || m_headSlot.Id() == 19641) || // Black Slayer helmet + (i)
-     (m_headSlot.Id() == 19643 || m_headSlot.Id() == 19645) || // Green Slayer helmet + (i)
-     (m_headSlot.Id() == 19647 || m_headSlot.Id() == 19649) || // Red Slayer helmet + (i)
-     (m_headSlot.Id() == 21264 || m_headSlot.Id() == 21266) || // Purple Slayer helmet + (i)
-     (m_headSlot.Id() == 21888 || m_headSlot.Id() == 21890) || // Turquoise Slayer helmet + (i)
-     (m_headSlot.Id() == 23073 || m_headSlot.Id() == 23075) || // Hydra Slayer helmet + (i)
-     (m_headSlot.Id() == 24370 || m_headSlot.Id() == 24444))) // Twisted Slayer helmet + (i)
-  {
-    otherBonus = 7.0/6.0;
   }
 
   int styleBonus = 0;
@@ -250,8 +290,101 @@ int Setup::CalculateEffectiveMeleeStrength()
   }
 
   int effectiveStrength = std::floor((strLevel + potionBonus) * prayerBonus * otherBonus) + styleBonus;
-
   return effectiveStrength;
+}
+
+float Setup::CalculateMeleeAccuracy()
+{
+  return 0.0f;
+}
+
+int Setup::CalculateEffectiveAttackLevel()
+{
+  int attackLevel = m_player.Stats().Attack;
+
+  int potionBonus = 0;
+  switch (m_player.Potions().AttackPotion)
+  {
+    case POTIONS_E::REGULAR_POTION:
+      potionBonus = 3 + std::floor(0.10 * attackLevel);
+      break;
+    case POTIONS_E::SUPER_POTION:
+      potionBonus = 5 + std::floor(0.15 * attackLevel);
+      break;
+    case POTIONS_E::OVERLOAD_MINUS:
+      potionBonus = 4 + std::floor(0.10 * attackLevel);
+      break;
+    case POTIONS_E::OVERLOAD:
+      potionBonus = 5 + std::floor(0.13 * attackLevel);
+      break;
+    case POTIONS_E::OVERLOAD_PLUS:
+      potionBonus = 6 + std::floor(0.16 * attackLevel);
+      break;
+    case POTIONS_E::NONE:
+    default:
+      potionBonus = 0;
+      break;
+  }
+
+  float prayerBonus = 1.0;
+  switch (m_player.Prayer().AttackPrayer)
+  {
+    case ATTACK_PRAYER_E::CLARITY_OF_THOUGHT:
+      prayerBonus = 1.05;
+      break;
+    case ATTACK_PRAYER_E::IMPROVED_REFLEXES:
+      prayerBonus = 1.10;
+      break;
+    case ATTACK_PRAYER_E::INCREDIBLE_REFLEXES:
+      prayerBonus = 1.15;
+      break;
+    case ATTACK_PRAYER_E::CHIVALRY:
+      prayerBonus = 1.15;
+      break;
+    case ATTACK_PRAYER_E::PIETY:
+      prayerBonus = 1.20;
+      break;
+    case ATTACK_PRAYER_E::NONE:
+    default:
+      prayerBonus = 1.0;
+      break;
+  }
+
+  int stanceBonus = 8;
+
+  Weapon w;
+  if (m_isOneHanded)
+  {
+    w = m_oneHandedSlot;
+  }
+  else
+  {
+    w = m_twoHandedSlot;
+  }
+
+  STANCE_T s = w.WeaponStats().Stances[m_weaponStance];
+
+  if (s.AttackStyle.compare("accurate") == 0)
+  {
+    stanceBonus = 11;
+  }
+  else if (s.AttackStyle.compare("controlled") == 0)
+  {
+    stanceBonus = 9;
+  }
+
+  float voidBonus = 1.0;
+
+  if (m_headSlot.Id() == 11665 && // Void melee helm
+     (m_bodySlot.Id() == 8839 || m_bodySlot.Id() == 13072) &&  // Void knight top or Elite void top
+     (m_legsSlot.Id() == 8840 || m_legsSlot.Id() == 13073) &&  // Void knight robe or Elite void robe
+      m_handSlot.Id() == 8842)    // Void knight gloves
+  {
+    voidBonus = 1.1;
+  }
+
+  int effectiveLevel = std::floor((std::floor((attackLevel + potionBonus) * prayerBonus) + stanceBonus) * voidBonus);
+  return effectiveLevel;
 }
 
 void Setup::SetPlayer(Player i_player)
@@ -322,7 +455,7 @@ void Setup::SetCurrentHitpoints(int i_currentHitpoints)
 
 void Setup::SetOnTask(bool i_onSlayerTask)
 {
-  m_onSlayerTask = m_onSlayerTask;
+  m_onSlayerTask = i_onSlayerTask;
 }
 
 void Setup::SetStance(int i_stance)

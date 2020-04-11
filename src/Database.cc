@@ -305,7 +305,7 @@ void Database::_jsonArrayToMonsterDB(nlohmann::json i_json)
 
     for (int j = 0; j < item["attributes"].size(); ++j)
     {
-      attributes.push_back(GetJsonString(item["attributes"][i]));
+      attributes.push_back(GetJsonString(item["attributes"][j]));
     }
 
     Monster m(name, id, combatAttack, combatStrength, combatDefence, combatRanged, combatMagic, hitpoints, accuracy, size,

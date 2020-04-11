@@ -74,7 +74,14 @@ protected:
   int CalculateRangedMaxHit();
   int CalculateMagicMaxHit();
 
+  float CalculateMeleeAccuracy();
+  float CalculateRangedAccuracy();
+  float CalculateMagicAccuracy();
+
+  int CalculateEffectiveAttackLevel();
   int CalculateEffectiveMeleeStrength();
+
+  int CalculateEffectiveRangedLevel();
   int CalculateEffectiveRangedStrength();
 
   Equipment m_ammoSlot,

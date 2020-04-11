@@ -32,29 +32,33 @@ int main(int argc, char **argv)
 
   std::cout << "Getting equipment by ids..." << std::endl;
 
-  int headIdx = db.FindHeadById(-1);
-  int bodyIdx = db.FindBodyById(4720);
-  int legsIdx = db.FindLegsById(4722);
-  int twoHIdx = db.FindTwoHandedById(4718);
+  int headIdx = db.FindHeadById(23073);
+  int bodyIdx = db.FindBodyById(-1);
+  int legsIdx = db.FindLegsById(-1);
+  int twoHIdx = db.FindTwoHandedById(-1);
+  int oneHIdx = db.FindOneHandedById(19675);
+  int shieldIdx = db.FindShieldById(-1);
 
-  int ammoIdx = db.FindAmmunitionById(22947);
-  int neckIdx = db.FindNeckById(19553);
-  int ringIdx = db.FindRingById(11773);
-  int bootsIdx = db.FindFeetById(13239);
-  int glovesIdx = db.FindHandById(7462);
-  int capeIdx = db.FindCapeById(6570);
+  int ammoIdx = db.FindAmmunitionById(-1);
+  int neckIdx = db.FindNeckById(12018);
+  int ringIdx = db.FindRingById(-1);
+  int bootsIdx = db.FindFeetById(-1);
+  int glovesIdx = db.FindHandById(-1);
+  int capeIdx = db.FindCapeById(-1);
 
   std::cout << "Getting enemy by id..." << std::endl;
 
-  int enemyIdx = db.FindMonsterById(5779);
+  int enemyIdx = db.FindMonsterById(6611);
 
   if (headIdx != -1 && bodyIdx != -1 && legsIdx != -1 && twoHIdx != -1 && ammoIdx != -1 && neckIdx != -1 &&
       ringIdx != -1 && bootsIdx != -1 && glovesIdx != -1 && capeIdx != -1 && enemyIdx != -1)
   {
-    Equipment head = db.Head()[headIdx];
-    Equipment body = db.Body()[bodyIdx];
-    Equipment legs = db.Legs()[legsIdx];
-    Weapon twoH    = db.TwoHanded()[twoHIdx];
+    Equipment head   = db.Head()[headIdx];
+    Equipment body   = db.Body()[bodyIdx];
+    Equipment legs   = db.Legs()[legsIdx];
+    Weapon twoH      = db.TwoHanded()[twoHIdx];
+    Weapon oneH      = db.OneHanded()[oneHIdx];
+    Equipment shield = db.Shield()[shieldIdx];
 
     Equipment ammo   = db.Ammunition()[ammoIdx];
     Equipment neck   = db.Neck()[neckIdx];
@@ -68,7 +72,8 @@ int main(int argc, char **argv)
     std::cout << "Helmet: " << head.Name() << std::endl;
     std::cout << "Body: " << body.Name() << std::endl;
     std::cout << "Legs: " << legs.Name() << std::endl;
-    std::cout << "Weapon: " << twoH.Name() << std::endl;
+    std::cout << "Weapon: " << oneH.Name() << std::endl;
+    std::cout << "Stance: " << oneH.WeaponStats().Stances[1].AttackStyle << " (" << oneH.WeaponStats().Stances[1].AttackType << ")" << std::endl;
     std::cout << "Ammo: " << ammo.Name() << std::endl;
     std::cout << "Necklace: " << neck.Name() << std::endl;
     std::cout << "Ring: " << ring.Name() << std::endl;
@@ -76,13 +81,17 @@ int main(int argc, char **argv)
     std::cout << "Gloves: " << gloves.Name() << std::endl;
     std::cout << "Cape: " << cape.Name() << std::endl;
     std::cout << "Enemy: " << enemy.Name() << std::endl;
+    for (int i = 0; i < enemy.Attributes().size(); i++)
+    {
+      std::cout << "\tAttr: " << enemy.Attributes()[i] << std::endl;
+    }
 
     std::cout << "Creating setup..." << std::endl;
 
-    Setup s(player, enemy, ammo, body, cape, boots, gloves, head, legs, neck, ring, twoH);
+    Setup s(player, enemy, ammo, body, cape, boots, gloves, head, legs, neck, ring, shield, oneH);
     s.SetStance(1);
-    s.SetCurrentHitpoints(1);
-    s.SetOnTask(false);
+    s.SetCurrentHitpoints(99);
+    s.SetOnTask(true);
 
     std::cout << "Max hit: " << s.GetMaxHit() << std::endl;
   }
