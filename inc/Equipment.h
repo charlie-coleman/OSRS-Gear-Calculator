@@ -1,11 +1,12 @@
 #ifndef EQUIPMENT_H
 #define EQUIPMENT_H
 
+#include "Thing.h"
 #include "types.h"
 #include <ostream>
 #include <string>
 
-class Equipment
+class Equipment : public Thing
 {
 public:
   Equipment();
@@ -17,10 +18,7 @@ public:
                                           int i_strength,    int i_rangedStrength, int i_magicDamage,  int i_prayer);
   
   ~Equipment();
-
-  void SetName(std::string i_name);
-  void SetId(int i_id);
-
+  
   void SetAttackBonuses(TYPE_BONUSES_T i_attackBonuses);
   void SetAttackBonuses(int i_stab, int i_slash, int i_crush, int i_magic, int i_ranged);
   
@@ -30,8 +28,6 @@ public:
   void SetOtherBonuses(OTHER_BONUSES_T i_otherBonuses);
   void SetOtherBonuses(int i_strength, int i_rangedStrength, float i_magicDamage, int i_prayer);
 
-  const std::string& Name() const;
-  const int& Id() const;
   const EQUIPMENT_STATS_T& Stats() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Equipment& obj)
@@ -56,8 +52,6 @@ public:
   }
 
 protected:
-  std::string m_name;
-  int m_id;
   EQUIPMENT_STATS_T m_stats;
 };
 

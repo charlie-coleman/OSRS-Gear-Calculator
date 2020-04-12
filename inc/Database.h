@@ -25,6 +25,10 @@ public:
   void FetchEquipment();
   void FetchMonsters();
 
+  void DumpJsonToFiles();
+  void ReadFilesToJson();
+  void ConvertJsonToDatabases();
+
   const std::vector<Equipment>& Ammunition() const;
   const std::vector<Equipment>& Body() const;
   const std::vector<Equipment>& Cape() const;
@@ -35,29 +39,33 @@ public:
   const std::vector<Equipment>& Neck() const;
   const std::vector<Equipment>& Ring() const;
   const std::vector<Equipment>& Shield() const;
-
-  const std::vector<Weapon>& TwoHanded() const;
-  const std::vector<Weapon>& OneHanded() const;
-
+  const std::vector<Weapon>& Weapons() const;
   const std::vector<Monster>& Monsters() const;
 
-  void DumpJsonToFiles();
-  void ReadFilesToJson();
-  void ConvertJsonToDatabases();
-
-  int FindAmmunitionById(int i_id);
-  int FindBodyById(int i_id);
-  int FindCapeById(int i_id);
-  int FindFeetById(int i_id);
-  int FindHandById(int i_id);
-  int FindHeadById(int i_id);
-  int FindLegsById(int i_id);
-  int FindNeckById(int i_id);
-  int FindRingById(int i_id);
-  int FindShieldById(int i_id);
-  int FindOneHandedById(int i_id);
-  int FindTwoHandedById(int i_id);
-  int FindMonsterById(int i_id);
+  int FindAmmunition(int i_id);
+  int FindAmmunition(std::string i_name);
+  int FindBody(int i_id);
+  int FindBody(std::string i_name);
+  int FindCape(int i_id);
+  int FindCape(std::string i_name);
+  int FindFeet(int i_id);
+  int FindFeet(std::string i_name);
+  int FindHand(int i_id);
+  int FindHand(std::string i_name);
+  int FindHead(int i_id);
+  int FindHead(std::string i_name);
+  int FindLegs(int i_id);
+  int FindLegs(std::string i_name);
+  int FindNeck(int i_id);
+  int FindNeck(std::string i_name);
+  int FindRing(int i_id);
+  int FindRing(std::string i_name);
+  int FindShield(int i_id);
+  int FindShield(std::string i_name);
+  int FindWeapon(int i_id);
+  int FindWeapon(std::string i_name);
+  int FindMonster(int i_id);
+  int FindMonster(std::string i_name);
 
 private:
   CURL *m_curl;
@@ -84,9 +92,11 @@ private:
   void DumpJsonToFile(std::string i_filePath, nlohmann::json i_json);
   void ReadFileToJson(std::string i_filePath, nlohmann::json& o_json);
   
-  int FindById(std::vector<Equipment> i_db, int i_id);
-  int FindById(std::vector<Weapon> i_db, int i_id);
-  int FindById(std::vector<Monster> i_db, int i_id);
+  template <typename T>
+  int FindById(std::vector<T> i_db, int i_id);
+  
+  template <typename T>
+  int FindByName(std::vector<T> i_db, std::string i_name);
 
   nlohmann::json m_ammoJSON,
                  m_bodyJSON,
@@ -98,7 +108,6 @@ private:
                  m_neckJSON,
                  m_ringJSON,
                  m_shieldJSON,
-                 m_twoHandedJSON,
                  m_weaponJSON,
                  m_monsterJSON;
 
@@ -113,8 +122,7 @@ private:
                          m_ringDB,
                          m_shieldDB;
 
-  std::vector<Weapon> m_twoHandedDB,
-                      m_weaponDB;
+  std::vector<Weapon> m_weaponDB;
 
   std::vector<Monster> m_monsterDB;
 
@@ -128,7 +136,6 @@ private:
   const std::string m_neckJSONFile = "./db/neck.json";
   const std::string m_ringJSONFile = "./db/ring.json";
   const std::string m_shieldJSONFile = "./db/shield.json";
-  const std::string m_twoHandedJSONFile = "./db/twoHanded.json";
   const std::string m_weaponJSONFile = "./db/weapon.json";
   const std::string m_monsterJSONFile = "./db/monster.json";
 };

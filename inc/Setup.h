@@ -14,12 +14,7 @@ public:
   Setup(Player i_player,      Monster i_monster,
         Equipment i_ammoSlot, Equipment i_bodySlot,   Equipment i_capeSlot,   Equipment i_feetSlot,
         Equipment i_handSlot, Equipment i_headSlot,   Equipment i_legsSlot,   Equipment i_neckSlot,
-        Equipment i_ringSlot, Equipment i_shieldSlot, Weapon i_oneHandedSlot);
-
-  Setup(Player i_player,      Monster i_monster,
-        Equipment i_ammoSlot, Equipment i_bodySlot,   Equipment i_capeSlot,   Equipment i_feetSlot,
-        Equipment i_handSlot, Equipment i_headSlot,   Equipment i_legsSlot,   Equipment i_neckSlot,
-        Equipment i_ringSlot, Weapon i_twoHandedSlot);
+        Equipment i_ringSlot, Equipment i_shieldSlot, Weapon i_weapon);
 
   ~Setup();
 
@@ -35,8 +30,7 @@ public:
   void SetNeck(Equipment i_neck);
   void SetRing(Equipment i_ring);
   void SetShield(Equipment i_shield);
-  void SetOneHanded(Weapon i_oneHanded);
-  void SetTwoHanded(Weapon i_twoHanded);
+  void SetWeapon(Weapon i_oneHanded);
 
   void SetCurrentHitpoints(int i_currentHitpoints);
   void SetOnTask(bool i_onSlayerTask);
@@ -55,19 +49,18 @@ public:
   const Equipment& NeckSlot() const;
   const Equipment& RingSlot() const;
   const Equipment& ShieldSlot() const;
-
-  const Weapon& OneHandedSlot() const;
-  const Weapon& TwoHandedSlot() const;
+  const Weapon& WeaponSlot() const;
 
   const int& CurrentHitpoints() const;
   const bool& IsOnTask() const;
 
-  int GetMaxHit();
+  void Recalculate();
+
+  const int& MaxDamage() const;
+  const float& Accuracy() const;
+  const float& DPS() const;
 
 protected:
-  int m_maxHit;
-  float m_accuracy, m_dps;
-
   void CalculateMaxHit();
 
   int CalculateMeleeMaxHit();
@@ -78,7 +71,9 @@ protected:
   float CalculateRangedAccuracy();
   float CalculateMagicAccuracy();
 
-  int CalculateEffectiveAttackLevel();
+  int CalculateEnemyMaxRoll();
+
+  int CalculateEffectiveMeleeAttackLevel();
   int CalculateEffectiveMeleeStrength();
 
   int CalculateEffectiveRangedLevel();
@@ -95,17 +90,16 @@ protected:
             m_ringSlot,
             m_shieldSlot;
 
-  Weapon m_oneHandedSlot,
-         m_twoHandedSlot;
+  Weapon    m_weaponSlot;
 
-  int m_weaponStance;
   int m_effectiveMeleeStrength, m_effectiveRangedStrength;
   int m_baseMeleeDamage, m_baseRangedDamage;
 
   int m_currentHitpoints;
   bool m_onSlayerTask;
 
-  bool m_isOneHanded;
+  int m_maxDamage;
+  float m_accuracy, m_dps;
 
   Monster m_monster;
 

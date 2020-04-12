@@ -1,9 +1,10 @@
 #ifndef MONSTER_H
 #define MONSTER_H
 
-#include <types.h>
+#include "Thing.h"
+#include "types.h"
 
-class Monster
+class Monster : public Thing
 {
 public:
   Monster();
@@ -26,24 +27,18 @@ public:
 
   ~Monster();
 
-  void SetName(std::string i_name);
-  void SetId(int i_id);
   void SetStats(MONSTER_STATS_T i_stats);
   void SetAttributes(std::vector<std::string> i_attributes);
 
   void AddAttribute(std::string i_attribute);
   void AddAttributes(std::vector<std::string> i_attributes);
 
-  const std::string& Name() const;
-  const int& Id() const;
   const MONSTER_STATS_T& Stats() const;
   const std::vector<std::string>& Attributes() const;
 
   bool HasAttribute(std::string);
 
 protected:
-  std::string m_name;
-  int m_id;
   MONSTER_STATS_T m_stats;
   std::vector<std::string> m_attributes;
 };

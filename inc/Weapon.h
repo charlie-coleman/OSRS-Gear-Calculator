@@ -8,17 +8,28 @@ class Weapon : public Equipment
 public:
   Weapon();
 
-  Weapon(std::string i_name, int i_id, EQUIPMENT_STATS_T i_stats, WEAPON_STATS_T i_weaponStats);
-  Weapon(std::string i_name, int i_id, TYPE_BONUSES_T i_attackBonuses, TYPE_BONUSES_T i_defenceBonuses, OTHER_BONUSES_T i_strengthBonuses, WEAPON_STATS_T i_weaponStats);
+  Weapon(std::string i_name, int i_id, EQUIPMENT_STATS_T i_stats, WEAPON_STATS_T i_weaponStats, bool i_twoHanded);
+  Weapon(std::string i_name, int i_id, TYPE_BONUSES_T i_attackBonuses, TYPE_BONUSES_T i_defenceBonuses, OTHER_BONUSES_T i_strengthBonuses, WEAPON_STATS_T i_weaponStats, bool i_twoHanded);
   Weapon(std::string i_name, int i_id, int i_stabAttack,  int i_slashAttack,    int i_crushAttack,  int i_rangedAttack,   int i_magicAttack,
                                        int i_stabDefence, int i_slashDefence,   int i_crushDefence, int i_rangedDefence,  int i_magicDefence,
                                        int i_strength,    int i_rangedStrength, int i_magicDamage,  int i_prayer,
-                                       int i_attackSpeed, std::vector<STANCE_T> i_stances);
+                                       int i_attackSpeed, bool i_twoHanded,     std::vector<STANCE_T> i_stances);
 
   ~Weapon();
 
+  void SetStance(int i_stanceIndex);
+  void SetTwoHanded(bool i_twoHanded);
+
+  COMBAT_STYLE_E::Type GetCombatStyle();
+  COMBAT_STYLE_E::Type GetCombatStyle(int i_stanceIndex);
+  MELEE_DAMAGE_TYPE_E::Type GetMeleeDamageType();
+  STANCE_T GetStance();
+  int GetStanceStrengthBonus();
+  int GetStanceAccuracyBonus();
+  float GetAttackSpeed();
 
   const WEAPON_STATS_T& WeaponStats() const;
+  const bool& TwoHanded() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Weapon& obj)
   {
@@ -49,6 +60,8 @@ public:
   }
 
 protected:
+  int m_stanceIndex;
+  bool m_twoHanded;
   WEAPON_STATS_T m_weaponStats;
 };
 

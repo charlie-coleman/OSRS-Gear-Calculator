@@ -54,16 +54,6 @@ Equipment::~Equipment()
 {
 }
 
-void Equipment::SetName(std::string i_name)
-{
-  m_name = i_name;
-}
-
-void Equipment::SetId(int i_id)
-{
-  m_id = i_id;
-}
-
 void Equipment::SetAttackBonuses(TYPE_BONUSES_T i_attackBonuses)
 {
   m_stats.AttackBonuses = i_attackBonuses;
@@ -103,16 +93,6 @@ void Equipment::SetOtherBonuses(int i_strength, int i_rangedStrength, float i_ma
   m_stats.OtherBonuses.RangedStrength = i_rangedStrength;
   m_stats.OtherBonuses.MagicDamage = i_magicDamage;
   m_stats.OtherBonuses.Prayer = i_prayer;
-}
-
-const std::string &Equipment::Name() const
-{
-  return m_name;
-}
-
-const int& Equipment::Id() const
-{
-  return m_id;
 }
 
 const EQUIPMENT_STATS_T &Equipment::Stats() const

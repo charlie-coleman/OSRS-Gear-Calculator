@@ -110,16 +110,6 @@ Monster::~Monster()
 {
 }
 
-void Monster::SetName(std::string i_name)
-{
-  m_name = i_name;
-}
-
-void Monster::SetId(int i_id)
-{
-  m_id = i_id;
-}
-
 void Monster::SetStats(MONSTER_STATS_T i_stats)
 {
   m_stats = i_stats;
@@ -138,16 +128,6 @@ void Monster::AddAttribute(std::string i_attribute)
 void Monster::AddAttributes(std::vector<std::string> i_attributes)
 {
   m_attributes.insert(m_attributes.end(), i_attributes.begin(), i_attributes.end());
-}
-
-const std::string& Monster::Name() const
-{
-  return m_name;
-}
-
-const int& Monster::Id() const
-{
-  return m_id;
 }
 
 const MONSTER_STATS_T& Monster::Stats() const

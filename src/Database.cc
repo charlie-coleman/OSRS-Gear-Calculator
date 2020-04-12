@@ -18,7 +18,7 @@ Database::Database()
   stances.push_back(noneStance);
   stances.push_back(noneStance);
   stances.push_back(noneStance);
-  Weapon noneWeap("None", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, stances);
+  Weapon noneWeap("None", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, stances);
 
   Monster noneMonster("None", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -32,10 +32,7 @@ Database::Database()
   m_neckDB.push_back(none);
   m_ringDB.push_back(none);
   m_shieldDB.push_back(none);
-
   m_weaponDB.push_back(noneWeap);
-  m_twoHandedDB.push_back(noneWeap);
-  
   m_monsterDB.push_back(noneMonster);
 }
 
@@ -179,7 +176,7 @@ void Database::_jsonArrayToEquipmentDB(nlohmann::json i_json)
 
       Weapon t(name, id, stabAttack, slashAttack, crushAttack, rangedAttack, magicAttack,
                          stabDefence, slashDefence, crushDefence, rangedDefence, magicDefence,
-                         strength, rangedStrength, magicDamage, prayer, attackSpeed, stances);
+                         strength, rangedStrength, magicDamage, prayer, attackSpeed, false, stances);
 
       weap = t;
     }
@@ -244,13 +241,10 @@ void Database::_jsonArrayToEquipmentDB(nlohmann::json i_json)
       m_shieldJSON.push_back(itemEssense);
       m_shieldDB.push_back(eq);
     }
-    else if (strSlot == "2h")
+    else if (strSlot == "weapon" || strSlot == "2h")
     {
-      m_twoHandedJSON.push_back(itemEssense);
-      m_twoHandedDB.push_back(weap);
-    }
-    else if (strSlot == "weapon")
-    {
+      weap.SetTwoHanded(strSlot.compare("2h") == 0);
+
       m_weaponJSON.push_back(itemEssense);
       m_weaponDB.push_back(weap);
     }
@@ -267,6 +261,11 @@ void Database::_jsonArrayToMonsterDB(nlohmann::json i_json)
   {
     nlohmann::json item = i_json[i];
     nlohmann::json itemEssense;
+
+    bool duplicate = item["duplicate"];
+    
+    if (duplicate)
+      continue;
 
     std::string idStr  = itemEssense["id"]              = item["id"];
     int id = std::stoi(idStr);
@@ -331,7 +330,6 @@ void Database::DumpJsonToFiles()
   DumpJsonToFile(m_neckJSONFile, m_neckJSON);
   DumpJsonToFile(m_ringJSONFile, m_ringJSON);
   DumpJsonToFile(m_shieldJSONFile, m_shieldJSON);
-  DumpJsonToFile(m_twoHandedJSONFile, m_twoHandedJSON);
   DumpJsonToFile(m_weaponJSONFile, m_weaponJSON);
   DumpJsonToFile(m_monsterJSONFile, m_monsterJSON);
 }
@@ -348,7 +346,6 @@ void Database::ReadFilesToJson()
   ReadFileToJson(m_neckJSONFile, m_neckJSON);
   ReadFileToJson(m_ringJSONFile, m_ringJSON);
   ReadFileToJson(m_shieldJSONFile, m_shieldJSON);
-  ReadFileToJson(m_twoHandedJSONFile, m_twoHandedJSON);
   ReadFileToJson(m_weaponJSONFile, m_weaponJSON);
   ReadFileToJson(m_monsterJSONFile, m_monsterJSON);
 }
@@ -365,62 +362,8 @@ void Database::ConvertJsonToDatabases()
   JsonArrayToEquipmentDB(m_neckJSON);
   JsonArrayToEquipmentDB(m_ringJSON);
   JsonArrayToEquipmentDB(m_shieldJSON);
-  JsonArrayToEquipmentDB(m_twoHandedJSON);
   JsonArrayToEquipmentDB(m_weaponJSON);
   JsonArrayToMonsterDB(m_monsterJSON);
-}
-
-int Database::FindAmmunitionById(int i_id)
-{
-  return FindById(m_ammoDB, i_id);
-}
-int Database::FindBodyById(int i_id)
-{
-  return FindById(m_bodyDB, i_id);
-}
-int Database::FindCapeById(int i_id)
-{
-  return FindById(m_capeDB, i_id);
-}
-int Database::FindFeetById(int i_id)
-{
-  return FindById(m_feetDB, i_id);
-}
-int Database::FindHandById(int i_id)
-{
-  return FindById(m_handDB, i_id);
-}
-int Database::FindHeadById(int i_id)
-{
-  return FindById(m_headDB, i_id);
-}
-int Database::FindLegsById(int i_id)
-{
-  return FindById(m_legsDB, i_id);
-}
-int Database::FindNeckById(int i_id)
-{
-  return FindById(m_neckDB, i_id);
-}
-int Database::FindRingById(int i_id)
-{
-  return FindById(m_ringDB, i_id);
-}
-int Database::FindShieldById(int i_id)
-{
-  return FindById(m_shieldDB, i_id);
-}
-int Database::FindOneHandedById(int i_id)
-{
-  return FindById(m_weaponDB, i_id);
-}
-int Database::FindTwoHandedById(int i_id)
-{
-  return FindById(m_twoHandedDB, i_id);
-}
-int Database::FindMonsterById(int i_id)
-{
-  return FindById(m_monsterDB, i_id);
 }
 
 void Database::DumpJsonToFile(std::string i_fileName, nlohmann::json i_json)
@@ -437,6 +380,163 @@ void Database::ReadFileToJson(std::string i_filename, nlohmann::json& o_json)
   file.close();
 }
 
+const std::vector<Equipment>& Database::Ammunition() const
+{
+  return m_ammoDB;
+}
+const std::vector<Equipment>& Database::Body() const
+{
+  return m_bodyDB;
+}
+const std::vector<Equipment>& Database::Cape() const
+{
+  return m_capeDB;
+}
+const std::vector<Equipment>& Database::Feet() const
+{
+  return m_feetDB;
+}
+const std::vector<Equipment>& Database::Hand() const
+{
+  return m_handDB;
+}
+const std::vector<Equipment>& Database::Head() const
+{
+  return m_headDB;
+}
+const std::vector<Equipment>& Database::Legs() const
+{
+  return m_legsDB;
+}
+const std::vector<Equipment>& Database::Neck() const
+{
+  return m_neckDB;
+}
+const std::vector<Equipment>& Database::Ring() const
+{
+  return m_ringDB;
+}
+const std::vector<Equipment>& Database::Shield() const
+{
+  return m_shieldDB;
+}
+const std::vector<Weapon>& Database::Weapons() const
+{
+  return m_weaponDB;
+}
+const std::vector<Monster>& Database::Monsters() const
+{
+  return m_monsterDB;
+}
+
+int Database::FindAmmunition(int i_id)
+{
+  return FindById(m_ammoDB, i_id);
+}
+int Database::FindAmmunition(std::string i_name)
+{
+  return FindByName(m_ammoDB, i_name);
+}
+
+int Database::FindBody(int i_id)
+{
+  return FindById(m_bodyDB, i_id);
+}
+int Database::FindBody(std::string i_name)
+{
+  return FindByName(m_bodyDB, i_name);
+}
+
+int Database::FindCape(int i_id)
+{
+  return FindById(m_capeDB, i_id);
+}
+int Database::FindCape(std::string i_name)
+{
+  return FindByName(m_capeDB, i_name);
+}
+
+int Database::FindFeet(int i_id)
+{
+  return FindById(m_feetDB, i_id);
+}
+int Database::FindFeet(std::string i_name)
+{
+  return FindByName(m_feetDB, i_name);
+}
+
+int Database::FindHand(int i_id)
+{
+  return FindById(m_handDB, i_id);
+}
+int Database::FindHand(std::string i_name)
+{
+  return FindByName(m_handDB, i_name);
+}
+
+int Database::FindHead(int i_id)
+{
+  return FindById(m_headDB, i_id);
+}
+int Database::FindHead(std::string i_name)
+{
+  return FindByName(m_headDB, i_name);
+}
+
+int Database::FindLegs(int i_id)
+{
+  return FindById(m_legsDB, i_id);
+}
+int Database::FindLegs(std::string i_name)
+{
+  return FindByName(m_legsDB, i_name);
+}
+
+int Database::FindNeck(int i_id)
+{
+  return FindById(m_neckDB, i_id);
+}
+int Database::FindNeck(std::string i_name)
+{
+  return FindByName(m_neckDB, i_name);
+}
+
+int Database::FindRing(int i_id)
+{
+  return FindById(m_ringDB, i_id);
+}
+int Database::FindRing(std::string i_name)
+{
+  return FindByName(m_ringDB, i_name);
+}
+
+int Database::FindShield(int i_id)
+{
+  return FindById(m_shieldDB, i_id);
+}
+int Database::FindShield(std::string i_name)
+{
+  return FindByName(m_shieldDB, i_name);
+}
+
+int Database::FindWeapon(int i_id)
+{
+  return FindById(m_weaponDB, i_id);
+}
+int Database::FindWeapon(std::string i_name)
+{
+  return FindByName(m_weaponDB, i_name);
+}
+
+int Database::FindMonster(int i_id)
+{
+  return FindById(m_monsterDB, i_id);
+}
+int Database::FindMonster(std::string i_name)
+{
+  return FindByName(m_monsterDB, i_name);
+}
+
 std::string Database::GetJsonString(nlohmann::json i_json)
 {
   if (i_json.is_null())
@@ -449,8 +549,10 @@ std::string Database::GetJsonString(nlohmann::json i_json)
   }
 }
 
-int Database::FindById(std::vector<Equipment> i_db, int i_id)
+template <typename T>
+int Database::FindById(std::vector<T> i_db, int i_id)
 {
+  static_assert(std::is_base_of<Thing, T>::value, "T is not derived from Thing");
   for (int i = 0; i < i_db.size(); ++i)
   {
     if (i_db[i].Id() == i_id)
@@ -461,91 +563,16 @@ int Database::FindById(std::vector<Equipment> i_db, int i_id)
   return -1;
 }
 
-int Database::FindById(std::vector<Weapon> i_db, int i_id)
+template <typename T>
+int Database::FindByName(std::vector<T> i_db, std::string i_name)
 {
+  static_assert(std::is_base_of<Thing, T>::value, "T is not derived from Thing");
   for (int i = 0; i < i_db.size(); ++i)
   {
-    if (i_db[i].Id() == i_id)
+    if (i_db[i].Name().compare(i_name) == 0)
     {
       return i;
     }
   }
   return -1;
-}
-
-int Database::FindById(std::vector<Monster> i_db, int i_id)
-{
-  for (int i = 0; i < i_db.size(); ++i)
-  {
-    if (i_db[i].Id() == i_id)
-    {
-      return i;
-    }
-  }
-  return -1;
-}
-
-const std::vector<Equipment>& Database::Ammunition() const
-{
-  return m_ammoDB;
-}
-
-const std::vector<Equipment>& Database::Body() const
-{
-  return m_bodyDB;
-}
-
-const std::vector<Equipment>& Database::Cape() const
-{
-  return m_capeDB;
-}
-
-const std::vector<Equipment>& Database::Feet() const
-{
-  return m_feetDB;
-}
-
-const std::vector<Equipment>& Database::Hand() const
-{
-  return m_handDB;
-}
-
-const std::vector<Equipment>& Database::Head() const
-{
-  return m_headDB;
-}
-
-const std::vector<Equipment>& Database::Legs() const
-{
-  return m_legsDB;
-}
-
-const std::vector<Equipment>& Database::Neck() const
-{
-  return m_neckDB;
-}
-
-const std::vector<Equipment>& Database::Ring() const
-{
-  return m_ringDB;
-}
-
-const std::vector<Equipment>& Database::Shield() const
-{
-  return m_shieldDB;
-}
-
-const std::vector<Weapon>& Database::TwoHanded() const
-{
-  return m_twoHandedDB;
-}
-
-const std::vector<Weapon>& Database::OneHanded() const
-{
-  return m_weaponDB;
-}
-
-const std::vector<Monster>& Database::Monsters() const
-{
-  return m_monsterDB;
 }

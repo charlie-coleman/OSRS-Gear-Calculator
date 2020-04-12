@@ -98,4 +98,26 @@ struct MAGIC_PRAYER_E
   };
 };
 
+struct COMBAT_STYLE_E
+{
+  enum Type
+  {
+    MELEE = 0,
+    RANGED = 1,
+    MAGIC = 2,
+    SIZE_OF_COMBAT_STYLE = 3
+  };
+};
+
+struct MELEE_DAMAGE_TYPE_E
+{
+  enum Type
+  {
+    SLASH = 0,
+    STAB = 1,
+    CRUSH = 2,
+    SIZE_OF_MELEE_DAMAGE_TYPE = 3
+  };
+};
+
 #endif
