@@ -28,7 +28,7 @@ public:
   void SetOtherBonuses(OTHER_BONUSES_T i_otherBonuses);
   void SetOtherBonuses(int i_strength, int i_rangedStrength, float i_magicDamage, int i_prayer);
 
-  const EQUIPMENT_STATS_T& Stats() const;
+  EQUIPMENT_STATS_T Stats() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Equipment& obj)
   {

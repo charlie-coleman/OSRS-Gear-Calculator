@@ -28,8 +28,8 @@ public:
   int GetStanceAccuracyBonus();
   float GetAttackSpeed();
 
-  const WEAPON_STATS_T& WeaponStats() const;
-  const bool& TwoHanded() const;
+  WEAPON_STATS_T WeaponStats() const;
+  bool TwoHanded() const;
 
   friend std::ostream &operator<<(std::ostream &os, const Weapon& obj)
   {

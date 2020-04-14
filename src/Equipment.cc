@@ -95,7 +95,7 @@ void Equipment::SetOtherBonuses(int i_strength, int i_rangedStrength, float i_ma
   m_stats.OtherBonuses.Prayer = i_prayer;
 }
 
-const EQUIPMENT_STATS_T &Equipment::Stats() const
+EQUIPMENT_STATS_T Equipment::Stats() const
 {
   return m_stats;
 }

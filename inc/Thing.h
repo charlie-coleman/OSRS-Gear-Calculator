@@ -10,10 +10,10 @@ public:
   ~Thing() {};
 
   void SetName(std::string i_name) { m_name = i_name; };
-  const std::string& Name() const  { return m_name;   };
+  std::string Name() const  { return m_name;   };
 
   void SetId(int i_id)  { m_id = i_id; };
-  const int& Id() const { return m_id; };
+  int Id() const { return m_id; };
 
 protected:
   std::string m_name;

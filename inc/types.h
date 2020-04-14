@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+
 struct TYPE_BONUSES_T
 {
   int Stab;
@@ -50,10 +52,24 @@ struct PLAYER_STATS_T
   int Strength;
   int Defence;
   int Ranged;
-  int RangedStrength;
   int Magic;
   int Prayer;
   int Hitpoints;
+  int CurrentHitpoints;
+
+  PLAYER_STATS_T& operator=(PLAYER_STATS_T i_stats)
+  {
+    Attack = i_stats.Attack;
+    Strength = i_stats.Strength;
+    Defence = i_stats.Defence;
+    Ranged = i_stats.Ranged;
+    Magic = i_stats.Magic;
+    Prayer = i_stats.Prayer;
+    Hitpoints = i_stats.Hitpoints;
+    CurrentHitpoints = i_stats.CurrentHitpoints;
+
+    return *this;
+  }
 };
 
 struct POTIONS_T

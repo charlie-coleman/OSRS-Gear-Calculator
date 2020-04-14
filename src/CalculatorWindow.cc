@@ -1,5 +1,7 @@
 #include "CalculatorWindow.h"
 
+#include <iostream>
+
 CalculatorWindow::CalculatorWindow()
 {
   set_title("Old School Runescape DPS Calculator");
@@ -10,30 +12,27 @@ CalculatorWindow::CalculatorWindow()
   m_db.ReadFilesToJson();
   m_db.ConvertJsonToDatabases();
 
-  InitializeLabels();
-  InitializeComboBoxes();
+  m_playerUI = new PlayerUI("Player Stats");
+  m_equipmentUI = new EquipmentUI(&m_db);
 
-  m_container.set_orientation(Gtk::Orientation::ORIENTATION_HORIZONTAL);
-  m_playerBox.set_orientation(Gtk::Orientation::ORIENTATION_VERTICAL);
-  m_gearBox.set_orientation(Gtk::Orientation::ORIENTATION_VERTICAL);
+  InitializeSetup();
 
-  m_playerBox.add(m_attackLabel);
-  m_playerBox.add(m_attackEntry);
-  m_playerBox.add(m_strengthLabel);
-  m_playerBox.add(m_strengthEntry);
-  m_playerBox.add(m_defenceLabel);
-  m_playerBox.add(m_defenceEntry);
-  m_playerBox.add(m_rangedLabel);
-  m_playerBox.add(m_rangedEntry);
-  m_playerBox.add(m_magicLabel);
-  m_playerBox.add(m_magicEntry);
-  m_playerBox.add(m_prayerLabel);
-  m_playerBox.add(m_prayerEntry);
-  m_playerBox.add(m_hitpointsLabel);
-  m_playerBox.add(m_hitpointsEntry);
+  m_container.set_orientation(Gtk::Orientation::ORIENTATION_VERTICAL);
+  
+  m_setupContainer.set_orientation(Gtk::Orientation::ORIENTATION_HORIZONTAL);
+  m_playerContainer.set_orientation(Gtk::Orientation::ORIENTATION_VERTICAL);
 
-  m_container.add(m_playerBox);
-  m_container.add(m_gearBox);
+  m_playerUI->signal_player_changed().connect(sigc::mem_fun(*this, &CalculatorWindow::on_player_changed));
+  m_equipmentUI->signal_equipment_change().connect(sigc::mem_fun(*this, &CalculatorWindow::on_equipment_changed));
+
+  m_setupContainer.add(*m_equipmentUI);
+  m_playerContainer.add(*m_playerUI);
+
+  m_setupContainer.set_border_width(10);
+  m_playerContainer.set_border_width(10);
+
+  m_container.add(m_playerContainer);
+  m_container.add(m_setupContainer);
   
   add(m_container);
 
@@ -44,57 +43,69 @@ CalculatorWindow::~CalculatorWindow()
 {
 }
 
-void CalculatorWindow::InitializeLabels()
-{
-  m_attackLabel.set_text("Attack Level: ");
-  m_strengthLabel.set_text("Strength Level: ");
-  m_defenceLabel.set_text("Defence Level: ");
-  m_rangedLabel.set_text("Ranged Level: ");
-  m_magicLabel.set_text("Magic Level: ");
-  m_prayerLabel.set_text("Prayer Level: ");
-  m_hitpointsLabel.set_text("Hitpoints Level: ");
-}
-
-void CalculatorWindow::InitializeComboBoxes()
-{
-  m_ammoCombo   = new SearchableComboBox<Equipment>(m_db.Ammunition());
-  m_bodyCombo   = new SearchableComboBox<Equipment>(m_db.Body());
-  m_capeCombo   = new SearchableComboBox<Equipment>(m_db.Cape());
-  m_feetCombo   = new SearchableComboBox<Equipment>(m_db.Feet());
-  m_handCombo   = new SearchableComboBox<Equipment>(m_db.Hand());
-  m_headCombo   = new SearchableComboBox<Equipment>(m_db.Head());
-  m_legsCombo   = new SearchableComboBox<Equipment>(m_db.Legs());
-  m_neckCombo   = new SearchableComboBox<Equipment>(m_db.Neck());
-  m_ringCombo   = new SearchableComboBox<Equipment>(m_db.Ring());
-  m_shieldCombo = new SearchableComboBox<Equipment>(m_db.Shield());
-
-  m_weaponCombo = new SearchableComboBox<Weapon>(m_db.Weapons());
-
-  m_monsterCombo = new SearchableComboBox<Monster>(m_db.Monsters());
-
-  m_gearBox.add(*m_ammoCombo);
-  m_gearBox.add(*m_bodyCombo);
-  m_gearBox.add(*m_capeCombo);   
-  m_gearBox.add(*m_feetCombo);
-  m_gearBox.add(*m_handCombo);
-  m_gearBox.add(*m_headCombo);
-  m_gearBox.add(*m_legsCombo);
-  m_gearBox.add(*m_neckCombo);
-  m_gearBox.add(*m_ringCombo);
-  m_gearBox.add(*m_shieldCombo);
-
-  m_gearBox.add(*m_weaponCombo);
-
-  m_gearBox.add(*m_monsterCombo);
-}
-
 void CalculatorWindow::InitializeSetup()
 {
-  Player player(99, 99, 99, 99, 99, 99, 99, 
-                POTIONS_E::SUPER_POTION, POTIONS_E::SUPER_POTION, POTIONS_E::SUPER_POTION, POTIONS_E::REGULAR_POTION, MAGIC_POTIONS_E::NONE,
-                ATTACK_PRAYER_E::PIETY, STRENGTH_PRAYER_E::PIETY, DEFENCE_PRAYER_E::PIETY, RANGED_PRAYER_E::RIGOUR, MAGIC_PRAYER_E::AUGURY);
+  m_setup = new Setup(m_playerUI->GetPlayer(), m_equipmentUI->GetMonster(), m_equipmentUI->Ammunition(), m_equipmentUI->Body(),   m_equipmentUI->Cape(),
+                                               m_equipmentUI->Feet(),       m_equipmentUI->Hand(),       m_equipmentUI->Head(),   m_equipmentUI->Legs(),
+                                               m_equipmentUI->Neck(),       m_equipmentUI->Ring(),       m_equipmentUI->Shield(), m_equipmentUI->GetWeapon());
+}
 
-  Setup t(player, m_monsterCombo->Selected(), m_ammoCombo->Selected(), m_bodyCombo->Selected(),   m_capeCombo->Selected(),
-                  m_feetCombo->Selected(),    m_handCombo->Selected(), m_headCombo->Selected(),   m_legsCombo->Selected(),
-                  m_neckCombo->Selected(),    m_ringCombo->Selected(), m_shieldCombo->Selected(), m_weaponCombo->Selected());
+void CalculatorWindow::on_player_changed()
+{
+  m_setup->SetPlayer(m_playerUI->GetPlayer());
+
+  m_setup->Recalculate();
+  std::cout << "Max hit: " << m_setup->MaxDamage() << std::endl;
+  std::cout << "Accuracy: " << m_setup->Accuracy() << std::endl;
+  std::cout << "DPS: " << m_setup->DPS() << std::endl;
+}
+
+void CalculatorWindow::on_equipment_changed(DB_TYPE_E::Type i_type)
+{
+  switch (i_type)
+  {
+  case DB_TYPE_E::AMMO:
+    m_setup->SetAmmunition(m_equipmentUI->Ammunition());
+    break;
+  case DB_TYPE_E::BODY:
+    m_setup->SetBody(m_equipmentUI->Body());
+    break;
+  case DB_TYPE_E::CAPE:
+    m_setup->SetCape(m_equipmentUI->Cape());
+    break;
+  case DB_TYPE_E::FEET:
+    m_setup->SetFeet(m_equipmentUI->Feet());
+    break;
+  case DB_TYPE_E::HAND:
+    m_setup->SetHand(m_equipmentUI->Hand());
+    break;
+  case DB_TYPE_E::HEAD:
+    m_setup->SetHead(m_equipmentUI->Head());
+    break;
+  case DB_TYPE_E::NECK:
+    m_setup->SetNeck(m_equipmentUI->Neck());
+    break;
+  case DB_TYPE_E::LEGS:
+    m_setup->SetLegs(m_equipmentUI->Legs());
+    break;
+  case DB_TYPE_E::RING:
+    m_setup->SetRing(m_equipmentUI->Ring());
+    break;
+  case DB_TYPE_E::SHIELD:
+    m_setup->SetShield(m_equipmentUI->Shield());
+    break;
+  case DB_TYPE_E::WEAPON:
+    m_setup->SetWeapon(m_equipmentUI->GetWeapon());
+    break;
+  case DB_TYPE_E::MONSTER:
+    m_setup->SetMonster(m_equipmentUI->GetMonster());
+    break;
+  default:
+    break;
+  }
+
+  m_setup->Recalculate();
+  std::cout << "Max hit: " << m_setup->MaxDamage() << std::endl;
+  std::cout << "Accuracy: " << m_setup->Accuracy() << std::endl;
+  std::cout << "DPS: " << m_setup->DPS() << std::endl;
 }

@@ -32,33 +32,30 @@ public:
   void SetShield(Equipment i_shield);
   void SetWeapon(Weapon i_oneHanded);
 
-  void SetCurrentHitpoints(int i_currentHitpoints);
   void SetOnTask(bool i_onSlayerTask);
   void SetStance(int i_stance);
 
-  const Player& GetPlayer() const;
-  const Monster& GetMonster() const;
+  Player GetPlayer() const;
+  Monster GetMonster() const;
 
-  const Equipment& AmmoSlot() const;
-  const Equipment& BodySlot() const;
-  const Equipment& CapeSlot() const;
-  const Equipment& FeetSlot() const;
-  const Equipment& HandSlot() const;
-  const Equipment& HeadSlot() const;
-  const Equipment& LegsSlot() const;
-  const Equipment& NeckSlot() const;
-  const Equipment& RingSlot() const;
-  const Equipment& ShieldSlot() const;
-  const Weapon& WeaponSlot() const;
-
-  const int& CurrentHitpoints() const;
-  const bool& IsOnTask() const;
+  Equipment AmmoSlot() const;
+  Equipment BodySlot() const;
+  Equipment CapeSlot() const;
+  Equipment FeetSlot() const;
+  Equipment HandSlot() const;
+  Equipment HeadSlot() const;
+  Equipment LegsSlot() const;
+  Equipment NeckSlot() const;
+  Equipment RingSlot() const;
+  Equipment ShieldSlot() const;
+  Weapon WeaponSlot() const;
 
   void Recalculate();
 
-  const int& MaxDamage() const;
-  const float& Accuracy() const;
-  const float& DPS() const;
+  bool IsOnTask() const;
+  int MaxDamage() const;
+  float Accuracy() const;
+  float DPS() const;
 
 protected:
   void CalculateMaxHit();
@@ -95,7 +92,6 @@ protected:
   int m_effectiveMeleeStrength, m_effectiveRangedStrength;
   int m_baseMeleeDamage, m_baseRangedDamage;
 
-  int m_currentHitpoints;
   bool m_onSlayerTask;
 
   int m_maxDamage;

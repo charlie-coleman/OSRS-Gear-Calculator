@@ -29,18 +29,21 @@ public:
   void ReadFilesToJson();
   void ConvertJsonToDatabases();
 
-  const std::vector<Equipment>& Ammunition() const;
-  const std::vector<Equipment>& Body() const;
-  const std::vector<Equipment>& Cape() const;
-  const std::vector<Equipment>& Feet() const;
-  const std::vector<Equipment>& Hand() const;
-  const std::vector<Equipment>& Head() const;
-  const std::vector<Equipment>& Legs() const;
-  const std::vector<Equipment>& Neck() const;
-  const std::vector<Equipment>& Ring() const;
-  const std::vector<Equipment>& Shield() const;
-  const std::vector<Weapon>& Weapons() const;
-  const std::vector<Monster>& Monsters() const;
+  /**
+   *  GETTERS
+   */
+  std::vector<Equipment> Ammunition() const;
+  std::vector<Equipment> Body() const;
+  std::vector<Equipment> Cape() const;
+  std::vector<Equipment> Feet() const;
+  std::vector<Equipment> Hand() const;
+  std::vector<Equipment> Head() const;
+  std::vector<Equipment> Legs() const;
+  std::vector<Equipment> Neck() const;
+  std::vector<Equipment> Ring() const;
+  std::vector<Equipment> Shield() const;
+  std::vector<Weapon>    Weapons() const;
+  std::vector<Monster>   Monsters() const;
 
   int FindAmmunition(int i_id);
   int FindAmmunition(std::string i_name);

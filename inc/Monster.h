@@ -33,8 +33,8 @@ public:
   void AddAttribute(std::string i_attribute);
   void AddAttributes(std::vector<std::string> i_attributes);
 
-  const MONSTER_STATS_T& Stats() const;
-  const std::vector<std::string>& Attributes() const;
+  MONSTER_STATS_T Stats() const;
+  std::vector<std::string> Attributes() const;
 
   bool HasAttribute(std::string);
 

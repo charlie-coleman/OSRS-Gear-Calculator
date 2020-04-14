@@ -7,21 +7,27 @@
 #include "Monster.h"
 
 template <class T>
-SearchableComboBox<T>::SearchableComboBox(std::vector<T> i_db)
-  : Glib::ObjectBase("searchablecombobox"),
-    Gtk::ComboBox()
+SearchableComboBox<T>::SearchableComboBox(Gtk::Grid* i_grid, int i_row, std::string i_labelStr, std::vector<T> i_db, DB_TYPE_E::Type i_type)
+  : m_label{i_labelStr},
+    m_combo(),
+    m_type(i_type)
 {
   static_assert(std::is_base_of<Thing, T>::value, "T is not of base class Thing");
   m_db = i_db;
 
   m_refTreeModel = Gtk::TreeStore::create(m_columns);
-  set_model(m_refTreeModel);
+  m_combo.set_model(m_refTreeModel);
 
   PopulateComboBox();
 
-  pack_start(m_columns.m_colName);
+  m_label.set_alignment(Gtk::Align::ALIGN_START, Gtk::Align::ALIGN_CENTER);
 
-  signal_changed().connect(sigc::mem_fun(*this, &SearchableComboBox<T>::on_combo_changed));
+  m_combo.pack_start(m_columns.m_colName);
+
+  m_combo.signal_changed().connect(sigc::mem_fun(*this, &SearchableComboBox<T>::on_combo_changed));
+
+  i_grid->attach(m_label, 0, i_row);
+  i_grid->attach(m_combo, 1, i_row);
 }
 
 template <class T>
@@ -30,7 +36,7 @@ SearchableComboBox<T>::~SearchableComboBox()
 }
 
 template <class T>
-const T& SearchableComboBox<T>::Selected() const
+T SearchableComboBox<T>::Selected() const
 {
   return m_selectedItem;
 }
@@ -48,7 +54,7 @@ void SearchableComboBox<T>::PopulateComboBox()
 
     if (i == 0) 
     {
-      set_active(row);
+      m_combo.set_active(row);
       m_selectedItem = m_db[0];
     }
   }
@@ -57,7 +63,7 @@ void SearchableComboBox<T>::PopulateComboBox()
 template <class T>
 void SearchableComboBox<T>::on_combo_changed()
 {
-  Gtk::TreeModel::iterator it = get_active();
+  Gtk::TreeModel::iterator it = m_combo.get_active();
 
   if (it)
   {
@@ -74,6 +80,14 @@ void SearchableComboBox<T>::on_combo_changed()
   {
     std::cerr << "SearchableComboBox: invalid active item on change." << std::endl;
   }
+
+  m_selected_change.emit(m_type);
+}
+
+template <class T>
+sigc::signal<void, DB_TYPE_E::Type> SearchableComboBox<T>::signal_selected_change()
+{
+  return m_selected_change;
 }
 
 template class SearchableComboBox<Equipment>;

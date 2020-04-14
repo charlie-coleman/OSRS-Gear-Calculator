@@ -11,14 +11,13 @@ Database::Database()
 
   Equipment none("None", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   
-  std::vector<STANCE_T> stances;
+  STANCE_T punch = {"accurate", "crush", "", "bash", "attack"};
+  STANCE_T kick = {"aggressive", "crush", "", "bash", "strength"};
+  STANCE_T block = {"defensive", "crush", "", "bash", "defence"};
 
-  STANCE_T noneStance = {""};
-  stances.push_back(noneStance);
-  stances.push_back(noneStance);
-  stances.push_back(noneStance);
-  stances.push_back(noneStance);
-  Weapon noneWeap("None", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, stances);
+  std::vector<STANCE_T> stances = { punch, kick, block };
+
+  Weapon noneWeap("Unarmed", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, stances);
 
   Monster noneMonster("None", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -262,7 +261,7 @@ void Database::_jsonArrayToMonsterDB(nlohmann::json i_json)
     nlohmann::json item = i_json[i];
     nlohmann::json itemEssense;
 
-    bool duplicate = item["duplicate"];
+    bool duplicate = itemEssense["duplicate"] = item["duplicate"];
     
     if (duplicate)
       continue;
@@ -380,51 +379,51 @@ void Database::ReadFileToJson(std::string i_filename, nlohmann::json& o_json)
   file.close();
 }
 
-const std::vector<Equipment>& Database::Ammunition() const
+std::vector<Equipment> Database::Ammunition() const
 {
   return m_ammoDB;
 }
-const std::vector<Equipment>& Database::Body() const
+std::vector<Equipment> Database::Body() const
 {
   return m_bodyDB;
 }
-const std::vector<Equipment>& Database::Cape() const
+std::vector<Equipment> Database::Cape() const
 {
   return m_capeDB;
 }
-const std::vector<Equipment>& Database::Feet() const
+std::vector<Equipment> Database::Feet() const
 {
   return m_feetDB;
 }
-const std::vector<Equipment>& Database::Hand() const
+std::vector<Equipment> Database::Hand() const
 {
   return m_handDB;
 }
-const std::vector<Equipment>& Database::Head() const
+std::vector<Equipment> Database::Head() const
 {
   return m_headDB;
 }
-const std::vector<Equipment>& Database::Legs() const
+std::vector<Equipment> Database::Legs() const
 {
   return m_legsDB;
 }
-const std::vector<Equipment>& Database::Neck() const
+std::vector<Equipment> Database::Neck() const
 {
   return m_neckDB;
 }
-const std::vector<Equipment>& Database::Ring() const
+std::vector<Equipment> Database::Ring() const
 {
   return m_ringDB;
 }
-const std::vector<Equipment>& Database::Shield() const
+std::vector<Equipment> Database::Shield() const
 {
   return m_shieldDB;
 }
-const std::vector<Weapon>& Database::Weapons() const
+std::vector<Weapon> Database::Weapons() const
 {
   return m_weaponDB;
 }
-const std::vector<Monster>& Database::Monsters() const
+std::vector<Monster> Database::Monsters() const
 {
   return m_monsterDB;
 }

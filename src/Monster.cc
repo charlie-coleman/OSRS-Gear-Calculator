@@ -130,12 +130,12 @@ void Monster::AddAttributes(std::vector<std::string> i_attributes)
   m_attributes.insert(m_attributes.end(), i_attributes.begin(), i_attributes.end());
 }
 
-const MONSTER_STATS_T& Monster::Stats() const
+MONSTER_STATS_T Monster::Stats() const
 {
   return m_stats;
 }
 
-const std::vector<std::string>& Monster::Attributes() const
+std::vector<std::string> Monster::Attributes() const
 {
   return m_attributes;
 }

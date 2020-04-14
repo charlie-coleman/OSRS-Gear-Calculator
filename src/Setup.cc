@@ -66,17 +66,17 @@ void Setup::Recalculate()
   m_dps = averageHit / attackSpeed;
 }
 
-const int& Setup::MaxDamage() const
+int Setup::MaxDamage() const
 {
   return m_maxDamage;
 }
 
-const float& Setup::Accuracy() const
+float Setup::Accuracy() const
 {
   return m_accuracy;
 }
 
-const float& Setup::DPS() const
+float Setup::DPS() const
 {
   return m_dps;
 }
@@ -187,7 +187,7 @@ int Setup::CalculateMeleeMaxHit()
   {
     int maxHP = m_player.Stats().Hitpoints;
 
-    int missingHitpoints = maxHP - m_currentHitpoints;
+    int missingHitpoints = maxHP - m_player.Stats().CurrentHitpoints;
     missingHitpoints = (missingHitpoints < 0) ? 0 : missingHitpoints;
     
     thirdBonus = 1.0 + ((missingHitpoints / 100.0) * (maxHP / 100.0));
@@ -631,76 +631,64 @@ void Setup::SetWeapon(Weapon i_weapon)
 {
   m_weaponSlot = i_weapon;
 }
-void Setup::SetCurrentHitpoints(int i_currentHitpoints)
-{
-  m_currentHitpoints = i_currentHitpoints;
-}
-void Setup::SetOnTask(bool i_onSlayerTask)
-{
-  m_onSlayerTask = i_onSlayerTask;
-}
 void Setup::SetStance(int i_stance)
 {
   m_weaponSlot.SetStance(i_stance);
 }
 
-const Player& Setup::GetPlayer() const
+Player Setup::GetPlayer() const
 {
   return m_player;
 }
-const Monster& Setup::GetMonster() const
+Monster Setup::GetMonster() const
 {
   return m_monster;
 }
-const Equipment& Setup::AmmoSlot() const
+Equipment Setup::AmmoSlot() const
 {
   return m_ammoSlot;
 }
-const Equipment& Setup::BodySlot() const
+Equipment Setup::BodySlot() const
 {
   return m_bodySlot;
 }
-const Equipment& Setup::CapeSlot() const
+Equipment Setup::CapeSlot() const
 {
   return m_capeSlot;
 }
-const Equipment& Setup::FeetSlot() const
+Equipment Setup::FeetSlot() const
 {
   return m_feetSlot;
 }
-const Equipment& Setup::HandSlot() const
+Equipment Setup::HandSlot() const
 {
   return m_handSlot;
 }
-const Equipment& Setup::HeadSlot() const
+Equipment Setup::HeadSlot() const
 {
   return m_headSlot;
 }
-const Equipment& Setup::LegsSlot() const
+Equipment Setup::LegsSlot() const
 {
   return m_legsSlot;
 }
-const Equipment& Setup::NeckSlot() const
+Equipment Setup::NeckSlot() const
 {
   return m_neckSlot;
 }
-const Equipment& Setup::RingSlot() const
+Equipment Setup::RingSlot() const
 {
   return m_ringSlot;
 }
-const Equipment& Setup::ShieldSlot() const
+Equipment Setup::ShieldSlot() const
 {
   return m_shieldSlot;
 }
-const Weapon& Setup::WeaponSlot() const
+Weapon Setup::WeaponSlot() const
 {
   return m_weaponSlot;
 }
-const int& Setup::CurrentHitpoints() const
-{
-  return m_currentHitpoints;
-}
-const bool& Setup::IsOnTask() const
+bool Setup::IsOnTask() const
 {
   return m_onSlayerTask;
 }

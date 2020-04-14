@@ -1,6 +1,9 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
+#include <vector>
+#include <string>
+
 struct POTIONS_E
 {
   enum Type
@@ -13,6 +16,8 @@ struct POTIONS_E
     OVERLOAD_PLUS = 5,
     SIZE_OF_POTIONS_E = 6
   };
+
+  static std::vector<std::string> Names;
 };
 
 struct MAGIC_POTIONS_E
@@ -28,6 +33,8 @@ struct MAGIC_POTIONS_E
     OVERLOAD_PLUS = 6,
     SIZE_OF_MAGIC_POTIONS_E = 7
   };
+
+  static std::vector<std::string> Names;
 };
 
 struct ATTACK_PRAYER_E
@@ -42,6 +49,8 @@ struct ATTACK_PRAYER_E
     PIETY = 5,
     SIZE_OF_ATTACK_PRAYER_E = 6
   };
+
+  static std::vector<std::string> Names;
 };
 
 struct STRENGTH_PRAYER_E
@@ -56,6 +65,8 @@ struct STRENGTH_PRAYER_E
     PIETY = 5,
     SIZE_OF_STRENGTH_PRAYER_E = 6
   };
+
+  static std::vector<std::string> Names;
 };
 
 struct DEFENCE_PRAYER_E
@@ -70,6 +81,8 @@ struct DEFENCE_PRAYER_E
     PIETY = 5,
     SIZE_OF_DEFENCE_PRAYER_E = 6
   };
+
+  static std::vector<std::string> Names;
 };
 
 struct RANGED_PRAYER_E
@@ -83,6 +96,8 @@ struct RANGED_PRAYER_E
     RIGOUR = 4,
     SIZE_OF_RANGED_PRAYER_E = 5
   };
+
+  static std::vector<std::string> Names;
 };
 
 struct MAGIC_PRAYER_E
@@ -96,6 +111,8 @@ struct MAGIC_PRAYER_E
     AUGURY = 4,
     SIZE_OF_MAGIC_PRAYER_E = 5
   };
+
+  static std::vector<std::string> Names;
 };
 
 struct COMBAT_STYLE_E
@@ -117,6 +134,26 @@ struct MELEE_DAMAGE_TYPE_E
     STAB = 1,
     CRUSH = 2,
     SIZE_OF_MELEE_DAMAGE_TYPE = 3
+  };
+};
+
+struct DB_TYPE_E
+{
+  enum Type
+  {
+    AMMO = 0,
+    BODY = 1,
+    CAPE = 2,
+    FEET = 3,
+    HAND = 4,
+    HEAD = 5,
+    LEGS = 6,
+    NECK = 7,
+    RING = 8,
+    SHIELD = 9,
+    WEAPON = 10,
+    MONSTER = 11,
+    SIZE_OF_DB_TYPE_E = 12
   };
 };
 

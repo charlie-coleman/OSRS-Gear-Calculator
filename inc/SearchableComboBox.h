@@ -2,20 +2,27 @@
 #define SEARCHABLE_COMBOBOX_H
 
 #include "gtkmm.h"
+#include "enums.h"
 #include <vector>
 
 template <class T>
-class SearchableComboBox : public Gtk::ComboBox
+class SearchableComboBox
 {
 public:
-  SearchableComboBox(std::vector<T> i_db);
+  SearchableComboBox(Gtk::Grid* i_grid, int i_row, std::string i_labelStr, std::vector<T> i_db, DB_TYPE_E::Type i_type);
   virtual ~SearchableComboBox();
 
-  const T& Selected() const;
+  T Selected() const;
+
+  sigc::signal<void, DB_TYPE_E::Type> signal_selected_change();
 
 protected:
   std::vector<T> m_db;
   T m_selectedItem;
+  DB_TYPE_E::Type m_type;
+
+  Gtk::Label m_label;
+  Gtk::ComboBox m_combo;
 
   class ModelColumns : public Gtk::TreeModel::ColumnRecord
   {
@@ -38,6 +45,8 @@ protected:
   void PopulateComboBox();
 
   void on_combo_changed();
+
+  sigc::signal<void, DB_TYPE_E::Type> m_selected_change;
 };
 
 #endif

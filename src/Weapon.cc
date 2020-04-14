@@ -1,7 +1,8 @@
 #include "Weapon.h"
 
 Weapon::Weapon()
-  : Equipment()
+  : Equipment(),
+    m_stanceIndex(0)
 {
   WEAPON_STATS_T temp;
 
@@ -13,14 +14,16 @@ Weapon::Weapon()
 }
 
 Weapon::Weapon(std::string i_name, int i_id, EQUIPMENT_STATS_T i_stats, WEAPON_STATS_T i_weaponStats, bool i_twoHanded)
-  : Equipment(i_name, i_id, i_stats)
+  : Equipment(i_name, i_id, i_stats),
+    m_stanceIndex(0)
 {
   m_weaponStats = i_weaponStats;
   m_twoHanded = i_twoHanded;
 }
 
 Weapon::Weapon(std::string i_name, int i_id, TYPE_BONUSES_T i_attackBonuses, TYPE_BONUSES_T i_defenceBonuses, OTHER_BONUSES_T i_strengthBonuses, WEAPON_STATS_T i_weaponStats, bool i_twoHanded)
-  : Equipment(i_name, i_id, i_attackBonuses, i_defenceBonuses, i_strengthBonuses)
+  : Equipment(i_name, i_id, i_attackBonuses, i_defenceBonuses, i_strengthBonuses),
+    m_stanceIndex(0)
 {
   m_weaponStats = i_weaponStats;
 }
@@ -35,7 +38,8 @@ Weapon::Weapon(std::string i_name, int i_id, int i_stabAttack,  int i_slashAttac
                                              int i_attackSpeed, bool i_twoHanded,     std::vector<STANCE_T> i_stances)
   : Equipment(i_name, i_id, i_stabAttack,  i_slashAttack,    i_crushAttack,  i_rangedAttack,  i_magicAttack,
                             i_stabDefence, i_slashDefence,   i_crushDefence, i_rangedDefence, i_magicDefence,
-                            i_strength,    i_rangedStrength, i_magicDamage,  i_prayer)
+                            i_strength,    i_rangedStrength, i_magicDamage,  i_prayer),
+    m_stanceIndex(0)
 {
   m_weaponStats.AttackSpeed = i_attackSpeed;
 
@@ -232,12 +236,12 @@ int Weapon::GetStanceAccuracyBonus()
   }
 }
 
-const WEAPON_STATS_T& Weapon::WeaponStats() const
+WEAPON_STATS_T Weapon::WeaponStats() const
 {
   return m_weaponStats;
 }
 
-const bool& Weapon::TwoHanded() const
+bool Weapon::TwoHanded() const
 {
   return m_twoHanded;
 }
