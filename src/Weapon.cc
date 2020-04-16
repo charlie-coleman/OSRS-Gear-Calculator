@@ -60,27 +60,7 @@ void Weapon::SetTwoHanded(bool i_twoHanded)
 
 COMBAT_STYLE_E::Type Weapon::GetCombatStyle()
 {
-  STANCE_T stance = m_weaponStats.Stances[m_stanceIndex];
-
-  if (stance.Experience.compare("attack") == 0 ||
-      stance.Experience.compare("strength") == 0 ||
-      stance.Experience.compare("defence") == 0 ||
-      stance.Experience.compare("shared") == 0)
-  {
-    return COMBAT_STYLE_E::MELEE;
-  }
-  else if (stance.Experience.compare("ranged") == 0 || stance.Experience.compare("ranged and defence") == 0)
-  {
-    return COMBAT_STYLE_E::RANGED;
-  }
-  else if (stance.Experience.compare("magic") == 0 || stance.Experience.compare("magic and defense") == 0)
-  {
-    return COMBAT_STYLE_E::MAGIC;
-  }
-  else
-  {
-    return COMBAT_STYLE_E::SIZE_OF_COMBAT_STYLE;
-  }
+  return GetCombatStyle(m_stanceIndex);
 }
 
 COMBAT_STYLE_E::Type Weapon::GetCombatStyle(int i_stanceIndex)

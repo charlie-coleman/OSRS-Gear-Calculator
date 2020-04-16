@@ -13,24 +13,38 @@ CalculatorWindow::CalculatorWindow()
   m_db.ConvertJsonToDatabases();
 
   m_playerUI = new PlayerUI("Player Stats");
-  m_equipmentUI = new EquipmentUI(&m_db);
+  
+  for (int i = 0; i < SETUP_COUNT; ++i)
+  {
+    m_equipmentUI[i] = new EquipmentUI(&m_db);
+  }
 
   InitializeSetup();
 
   m_container.set_orientation(Gtk::Orientation::ORIENTATION_VERTICAL);
   
+  m_outputContainer.set_orientation(Gtk::Orientation::ORIENTATION_HORIZONTAL);
+  m_playerContainer.set_orientation(Gtk::Orientation::ORIENTATION_HORIZONTAL);
   m_setupContainer.set_orientation(Gtk::Orientation::ORIENTATION_HORIZONTAL);
-  m_playerContainer.set_orientation(Gtk::Orientation::ORIENTATION_VERTICAL);
 
   m_playerUI->signal_player_changed().connect(sigc::mem_fun(*this, &CalculatorWindow::on_player_changed));
-  m_equipmentUI->signal_equipment_change().connect(sigc::mem_fun(*this, &CalculatorWindow::on_equipment_changed));
 
-  m_setupContainer.add(*m_equipmentUI);
   m_playerContainer.add(*m_playerUI);
+  
+  for (int i = 0; i < SETUP_COUNT; ++i)
+  {
+    m_equipmentUI[i]->signal_equipment_change().connect(sigc::bind<int>(sigc::mem_fun(*this, &CalculatorWindow::on_equipment_changed), i));
+    m_equipmentUI[i]->signal_stance_change().connect(sigc::bind<int>(sigc::mem_fun(*this, &CalculatorWindow::on_stance_changed), i));
+
+    m_setupContainer.add(*m_equipmentUI[i]);
+    m_outputContainer.add(*m_setupOutput[i]);
+  }
 
   m_setupContainer.set_border_width(10);
   m_playerContainer.set_border_width(10);
+  m_outputContainer.set_border_width(10);
 
+  m_container.add(m_outputContainer);
   m_container.add(m_playerContainer);
   m_container.add(m_setupContainer);
   
@@ -45,67 +59,79 @@ CalculatorWindow::~CalculatorWindow()
 
 void CalculatorWindow::InitializeSetup()
 {
-  m_setup = new Setup(m_playerUI->GetPlayer(), m_equipmentUI->GetMonster(), m_equipmentUI->Ammunition(), m_equipmentUI->Body(),   m_equipmentUI->Cape(),
-                                               m_equipmentUI->Feet(),       m_equipmentUI->Hand(),       m_equipmentUI->Head(),   m_equipmentUI->Legs(),
-                                               m_equipmentUI->Neck(),       m_equipmentUI->Ring(),       m_equipmentUI->Shield(), m_equipmentUI->GetWeapon());
+  for (int i = 0; i < SETUP_COUNT; ++i)
+  {
+    m_setup[i] = new Setup(m_playerUI->GetPlayer(), m_equipmentUI[i]->GetMonster(), m_equipmentUI[i]->Ammunition(), m_equipmentUI[i]->Body(),   m_equipmentUI[i]->Cape(),
+                                                    m_equipmentUI[i]->Feet(),       m_equipmentUI[i]->Hand(),       m_equipmentUI[i]->Head(),   m_equipmentUI[i]->Legs(),
+                                                    m_equipmentUI[i]->Neck(),       m_equipmentUI[i]->Ring(),       m_equipmentUI[i]->Shield(), m_equipmentUI[i]->GetWeapon());
+
+    m_setupOutput[i] = new SetupOutput(m_setup[i]);
+    m_setupOutput[i]->Update();
+  }
 }
 
 void CalculatorWindow::on_player_changed()
 {
-  m_setup->SetPlayer(m_playerUI->GetPlayer());
-
-  m_setup->Recalculate();
-  std::cout << "Max hit: " << m_setup->MaxDamage() << std::endl;
-  std::cout << "Accuracy: " << m_setup->Accuracy() << std::endl;
-  std::cout << "DPS: " << m_setup->DPS() << std::endl;
+  for (int i = 0; i < SETUP_COUNT; ++i)
+  {
+    m_setup[i]->SetPlayer(m_playerUI->GetPlayer());
+    m_setupOutput[i]->Update();
+  }
 }
 
-void CalculatorWindow::on_equipment_changed(DB_TYPE_E::Type i_type)
+void CalculatorWindow::on_equipment_changed(DB_TYPE_E::Type i_type, int i_setupIndex)
 {
+  EquipmentUI *eq = m_equipmentUI[i_setupIndex];
+  Setup *s = m_setup[i_setupIndex];
+  SetupOutput *sOut = m_setupOutput[i_setupIndex];
+
   switch (i_type)
   {
   case DB_TYPE_E::AMMO:
-    m_setup->SetAmmunition(m_equipmentUI->Ammunition());
+    s->SetAmmunition(eq->Ammunition());
     break;
   case DB_TYPE_E::BODY:
-    m_setup->SetBody(m_equipmentUI->Body());
+    s->SetBody(eq->Body());
     break;
   case DB_TYPE_E::CAPE:
-    m_setup->SetCape(m_equipmentUI->Cape());
+    s->SetCape(eq->Cape());
     break;
   case DB_TYPE_E::FEET:
-    m_setup->SetFeet(m_equipmentUI->Feet());
+    s->SetFeet(eq->Feet());
     break;
   case DB_TYPE_E::HAND:
-    m_setup->SetHand(m_equipmentUI->Hand());
+    s->SetHand(eq->Hand());
     break;
   case DB_TYPE_E::HEAD:
-    m_setup->SetHead(m_equipmentUI->Head());
+    s->SetHead(eq->Head());
     break;
   case DB_TYPE_E::NECK:
-    m_setup->SetNeck(m_equipmentUI->Neck());
+    s->SetNeck(eq->Neck());
     break;
   case DB_TYPE_E::LEGS:
-    m_setup->SetLegs(m_equipmentUI->Legs());
+    s->SetLegs(eq->Legs());
     break;
   case DB_TYPE_E::RING:
-    m_setup->SetRing(m_equipmentUI->Ring());
+    s->SetRing(eq->Ring());
     break;
   case DB_TYPE_E::SHIELD:
-    m_setup->SetShield(m_equipmentUI->Shield());
+    s->SetShield(eq->Shield());
     break;
   case DB_TYPE_E::WEAPON:
-    m_setup->SetWeapon(m_equipmentUI->GetWeapon());
+    s->SetWeapon(eq->GetWeapon());
     break;
   case DB_TYPE_E::MONSTER:
-    m_setup->SetMonster(m_equipmentUI->GetMonster());
+    s->SetMonster(eq->GetMonster());
     break;
   default:
     break;
   }
 
-  m_setup->Recalculate();
-  std::cout << "Max hit: " << m_setup->MaxDamage() << std::endl;
-  std::cout << "Accuracy: " << m_setup->Accuracy() << std::endl;
-  std::cout << "DPS: " << m_setup->DPS() << std::endl;
+  sOut->Update();
+}
+
+void CalculatorWindow::on_stance_changed(int i_stanceIndex, int i_setupIndex)
+{
+  m_setup[i_setupIndex]->SetStance(i_stanceIndex);
+  m_setupOutput[i_setupIndex]->Update();
 }

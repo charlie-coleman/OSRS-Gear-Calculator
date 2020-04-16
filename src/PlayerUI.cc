@@ -61,7 +61,7 @@ void PlayerUI::InitializeEntries()
   m_prayerEntry->signal_level_changed().connect(sigc::mem_fun(*this, &PlayerUI::on_prayer_changed));
 
   m_hitpointsEntry = new LevelEntry(&m_grid, 7, "Hitpoints: ", {}, {});
-  m_hitpointsEntry->signal_level_changed().connect(sigc::mem_fun(*this, &PlayerUI::on_attack_changed));
+  m_hitpointsEntry->signal_level_changed().connect(sigc::mem_fun(*this, &PlayerUI::on_hitpoints_changed));
   
   m_currentHitpointsEntry = new LevelEntry(&m_grid, 8, "Current Hitpoints: ", {}, {});
   m_currentHitpointsEntry->signal_level_changed().connect(sigc::mem_fun(*this, &PlayerUI::on_current_hp_changed));

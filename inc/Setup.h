@@ -97,6 +97,9 @@ protected:
   int m_maxDamage;
   float m_accuracy, m_dps;
 
+  int m_maxDamageRoll;
+  float m_postDamageRollMultiplier;
+
   Monster m_monster;
 
   Player m_player;

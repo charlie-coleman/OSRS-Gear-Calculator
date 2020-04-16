@@ -54,7 +54,7 @@ void Setup::Recalculate()
     m_accuracy = CalculateMagicMaxHit();
   }
 
-  float averageSuccessfulHit = m_maxDamage / 2.0;
+  float averageSuccessfulHit = (m_maxDamageRoll * m_postDamageRollMultiplier) / 2;
   float averageHit = averageSuccessfulHit * m_accuracy;
   float attackSpeed = m_weaponSlot.GetAttackSpeed();
 
@@ -88,8 +88,6 @@ float Setup::DPS() const
  */
 int Setup::CalculateMeleeMaxHit()
 {
-  int strengthLevel = m_player.Stats().Strength;
-
   int effectiveStrength = CalculateEffectiveMeleeStrength();
 
   int strengthBonus = 0;
@@ -112,18 +110,18 @@ int Setup::CalculateMeleeMaxHit()
 
   int baseDamage = std::floor(0.5 + effectiveStrength * (64.0 + strengthBonus) / 640.0);
 
+  bool isUndead   = m_monster.HasAttribute("undead");
+  bool isDemon    = m_monster.HasAttribute("demon");
+  bool isLeafy    = m_monster.HasAttribute("leafy");
+  bool isShady    = m_monster.HasAttribute("shade");
+  bool isKalphite = m_monster.HasAttribute("kalphite");
+  bool isDragon   = m_monster.HasAttribute("dragon");
+
   // FIRST ROUND OF SPECIAL MODIFIERS
   // PICK ONE BONUS: Salve, Salve (e), or Black Mask
   // Salve has priority over Black Mask
 
   float firstBonus = 1.0;
-
-  bool isUndead = m_monster.HasAttribute("undead");
-  bool isDemon = m_monster.HasAttribute("demon");
-  bool isLeafy = m_monster.HasAttribute("leafy");
-  bool isShady = m_monster.HasAttribute("shade");
-  bool isKalphite = m_monster.HasAttribute("kalphite");
-  bool isDragon = m_monster.HasAttribute("dragon");
 
   if (isUndead && (m_neckSlot.Id() == 4081 || m_neckSlot.Id() == 12017)) // Salve
   {
@@ -174,6 +172,7 @@ int Setup::CalculateMeleeMaxHit()
   }
 
   int secondBonusDamage = std::floor(secondBonus * firstBonusDamage);
+  m_maxDamageRoll = secondBonusDamage;
 
   // THIRD ROUND OF SPECIAL MODIFIERS
   // Again, not accounting for special attacks here. Main items are darklight, dharok's, zerker neck
@@ -190,7 +189,7 @@ int Setup::CalculateMeleeMaxHit()
     int missingHitpoints = maxHP - m_player.Stats().CurrentHitpoints;
     missingHitpoints = (missingHitpoints < 0) ? 0 : missingHitpoints;
     
-    thirdBonus = 1.0 + ((missingHitpoints / 100.0) * (maxHP / 100.0));
+    thirdBonus = 1.0 + ((missingHitpoints / 100.0) * (maxHP /100.0));
   }
   else if ((m_weaponSlot.Id() == 6523 || m_weaponSlot.Id() == 6525 || m_weaponSlot.Id() == 6527 || m_weaponSlot.Id() == 6528) && // Obsidian weapons
            (m_neckSlot.Id() == 11128 || m_neckSlot.Id() == 23240))                               // Berserker necklace or Berserker necklace (or)
@@ -209,6 +208,8 @@ int Setup::CalculateMeleeMaxHit()
   {
     thirdBonus = 4.0/3.0;
   }
+
+  m_postDamageRollMultiplier = thirdBonus;
 
   int maxHit = std::floor(thirdBonus * secondBonusDamage);
 

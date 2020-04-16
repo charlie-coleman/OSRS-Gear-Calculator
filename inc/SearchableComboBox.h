@@ -23,6 +23,9 @@ protected:
 
   Gtk::Label m_label;
   Gtk::ComboBox m_combo;
+  Gtk::Entry* m_comboEntry;
+
+  std::string ToLower(std::string i_str);
 
   class ModelColumns : public Gtk::TreeModel::ColumnRecord
   {
@@ -40,11 +43,15 @@ protected:
   };
 
   ModelColumns m_columns;
-  Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
+  Glib::RefPtr<Gtk::EntryCompletion> m_refEntryCompletion;
+  Glib::RefPtr<Gtk::TreeStore> m_refTreeModel, m_refCompletionModel;
 
   void PopulateComboBox();
 
   void on_combo_changed();
+  void on_entry_activate();
+
+  bool on_completion_selection(const Gtk::TreeModel::iterator& iter);
 
   sigc::signal<void, DB_TYPE_E::Type> m_selected_change;
 };

@@ -6,6 +6,7 @@
 #include "SearchableComboBox.h"
 #include "PlayerUI.h"
 #include "EquipmentUI.h"
+#include "SetupOutput.h"
 
 #include <gtkmm.h>
 
@@ -19,17 +20,24 @@ protected:
   void InitializeSetup();
 
   void on_player_changed();
-  void on_equipment_changed(DB_TYPE_E::Type i_type);
+  
+  void on_equipment_changed(DB_TYPE_E::Type i_type, int i_setupIndex);
+  
+  void on_stance_changed(int i_stanceIndex, int i_setupIndex);
 
-  Setup *m_setup;
+  static const int SETUP_COUNT = 2;
+
+  Setup *m_setup[SETUP_COUNT];
   Database m_db;
 
   PlayerUI *m_playerUI;
-  EquipmentUI *m_equipmentUI;
+  EquipmentUI *m_equipmentUI[SETUP_COUNT];
+  SetupOutput *m_setupOutput[SETUP_COUNT];
              
   Gtk::Box m_container,
            m_setupContainer,
-           m_playerContainer;
+           m_playerContainer,
+           m_outputContainer;
 };
 
 #endif

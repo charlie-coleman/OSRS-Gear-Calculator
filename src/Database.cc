@@ -17,7 +17,7 @@ Database::Database()
 
   std::vector<STANCE_T> stances = { punch, kick, block };
 
-  Weapon noneWeap("Unarmed", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, stances);
+  Weapon noneWeap("Unarmed", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, false, stances);
 
   Monster noneMonster("None", -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 

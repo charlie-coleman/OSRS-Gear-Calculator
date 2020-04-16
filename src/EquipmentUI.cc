@@ -13,38 +13,41 @@ EquipmentUI::~EquipmentUI()
 
 void EquipmentUI::InitializeComboBoxes()
 {
-  m_ammoCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 0, "Ammunition: ", m_db->Ammunition(), DB_TYPE_E::AMMO);
+  m_weaponCombo = new SearchableComboBox<Weapon>((Gtk::Grid*)this, 0, "Weapon: ", m_db->Weapons(), DB_TYPE_E::WEAPON);
+  m_weaponCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
+
+  m_stanceCombo = new StanceComboBox((Gtk::Grid*)this, 1, "Stance: ", m_weaponCombo->Selected());
+  m_stanceCombo->signal_stance_changed().connect(sigc::mem_fun(*this, &EquipmentUI::on_stance_change));
+
+  m_ammoCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 2, "Ammunition: ", m_db->Ammunition(), DB_TYPE_E::AMMO);
   m_ammoCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
 
-  m_bodyCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 1, "Body: ", m_db->Body(), DB_TYPE_E::BODY);
-  m_bodyCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
-
-  m_capeCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 2, "Cape: ", m_db->Cape(), DB_TYPE_E::CAPE);
-  m_capeCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
-
-  m_feetCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 3, "Feet: ", m_db->Feet(), DB_TYPE_E::FEET);
-  m_feetCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
-
-  m_handCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 4, "Hand: ", m_db->Hand(), DB_TYPE_E::HAND);
-  m_handCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
-
-  m_headCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 5, "Head: ", m_db->Head(), DB_TYPE_E::HEAD);
+  m_headCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 3, "Head: ", m_db->Head(), DB_TYPE_E::HEAD);
   m_headCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
 
-  m_legsCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 6, "Legs: ", m_db->Legs(), DB_TYPE_E::LEGS);
-  m_legsCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
+  m_capeCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 4, "Cape: ", m_db->Cape(), DB_TYPE_E::CAPE);
+  m_capeCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
 
-  m_neckCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 7, "Neck: ", m_db->Neck(), DB_TYPE_E::NECK);
+  m_neckCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 5, "Neck: ", m_db->Neck(), DB_TYPE_E::NECK);
   m_neckCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
 
-  m_ringCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 8, "Ring: ", m_db->Ring(), DB_TYPE_E::RING);
-  m_ringCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
+  m_bodyCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 6, "Body: ", m_db->Body(), DB_TYPE_E::BODY);
+  m_bodyCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
 
-  m_shieldCombo = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 9, "Shield: ", m_db->Shield(), DB_TYPE_E::SHIELD);
+  m_legsCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 7, "Legs: ", m_db->Legs(), DB_TYPE_E::LEGS);
+  m_legsCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
+
+  m_shieldCombo = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 8, "Shield: ", m_db->Shield(), DB_TYPE_E::SHIELD);
   m_shieldCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
 
-  m_weaponCombo = new SearchableComboBox<Weapon>((Gtk::Grid*)this, 10, "Weapon: ", m_db->Weapons(), DB_TYPE_E::WEAPON);
-  m_weaponCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
+  m_handCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 9, "Hand: ", m_db->Hand(), DB_TYPE_E::HAND);
+  m_handCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
+
+  m_feetCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 10, "Feet: ", m_db->Feet(), DB_TYPE_E::FEET);
+  m_feetCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
+
+  m_ringCombo   = new SearchableComboBox<Equipment>((Gtk::Grid*)this, 11, "Ring: ", m_db->Ring(), DB_TYPE_E::RING);
+  m_ringCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
 
   m_monsterCombo = new SearchableComboBox<Monster>((Gtk::Grid*)this, 12, "Monster: ", m_db->Monsters(), DB_TYPE_E::MONSTER);
   m_monsterCombo->signal_selected_change().connect(sigc::mem_fun(*this, &EquipmentUI::on_equipment_change));
@@ -106,7 +109,22 @@ sigc::signal<void, DB_TYPE_E::Type> EquipmentUI::signal_equipment_change()
   return m_equipment_changed;
 }
 
+sigc::signal<void, int> EquipmentUI::signal_stance_change()
+{
+  return m_stance_changed;
+}
+
 void EquipmentUI::on_equipment_change(DB_TYPE_E::Type i_type)
 {
+  if (i_type == DB_TYPE_E::WEAPON)
+  {
+    m_stanceCombo->SetWeapon(m_weaponCombo->Selected());
+  }
+
   m_equipment_changed.emit(i_type);
+}
+
+void EquipmentUI::on_stance_change(int i_stanceIndex)
+{
+  m_stance_changed.emit(i_stanceIndex);
 }
