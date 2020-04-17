@@ -2,8 +2,9 @@
 
 #include <string>
 
-SetupOutput::SetupOutput(Setup* i_setup)
-  : m_maxHitLabel("Max Hit: "),
+SetupOutput::SetupOutput(std::string i_title, Setup* i_setup)
+  : m_titleLabel(i_title),
+    m_maxHitLabel("Max Hit: "),
     m_maxHitEntry(),
     m_accuracyLabel("Accuracy: "),
     m_accuracyEntry(),
@@ -23,12 +24,26 @@ SetupOutput::SetupOutput(Setup* i_setup)
   m_accuracyLabel.set_alignment(Gtk::Align::ALIGN_START, Gtk::Align::ALIGN_CENTER);
   m_dpsLabel.set_alignment(Gtk::Align::ALIGN_START, Gtk::Align::ALIGN_CENTER);
 
-  attach(m_maxHitLabel, 0, 0);
-  attach(m_maxHitEntry, 1, 0);
-  attach(m_accuracyLabel, 0, 1);
-  attach(m_accuracyEntry, 1, 1);
-  attach(m_dpsLabel, 0, 2);
-  attach(m_dpsEntry, 1, 2);
+  m_grid.attach(m_maxHitLabel, 0, 0);
+  m_grid.attach(m_maxHitEntry, 1, 0);
+  m_grid.attach(m_accuracyLabel, 0, 1);
+  m_grid.attach(m_accuracyEntry, 1, 1);
+  m_grid.attach(m_dpsLabel, 0, 2);
+  m_grid.attach(m_dpsEntry, 1, 2);
+
+  Pango::AttrList attrList;
+  Pango::AttrInt attr = Pango::Attribute::create_attr_size(20 * 1024);
+  attrList.insert(attr);
+
+  m_titleLabel.set_attributes(attrList);
+  m_titleLabel.set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+
+  set_orientation(Gtk::ORIENTATION_VERTICAL);
+
+  add(m_titleLabel);
+  add(m_grid);
+
+  set_border_width(15);
 }
 
 SetupOutput::~SetupOutput()
@@ -46,7 +61,7 @@ void SetupOutput::Update()
   std::string accuracy(accCStr);
 
   char dpsCStr[16];
-  sprintf(dpsCStr, "%.3f", m_setup->DPS());
+  sprintf(dpsCStr, "%f", m_setup->DPS());
   std::string dps(dpsCStr);
 
   m_maxHitEntry.set_text(maxHit);

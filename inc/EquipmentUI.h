@@ -5,18 +5,16 @@
 #include "SearchableComboBox.h"
 #include "StanceCombBox.h"
 #include "Database.h"
-#include "Equipment.h"
-#include "Weapon.h"
-#include "Monster.h"
+#include "Setup.h"
+#include "enums.h"
 
-class EquipmentUI : public Gtk::Grid
+class EquipmentUI : public Gtk::Box
 {
 public:
-  EquipmentUI(Database *i_db);
+  EquipmentUI(std::string i_title, Database *i_db, Setup *i_setup);
   virtual ~EquipmentUI();
 
-  sigc::signal<void, DB_TYPE_E::Type> signal_equipment_change();
-  sigc::signal<void, int> signal_stance_change();
+  sigc::signal<void> signal_setup_update();
 
   Equipment Ammunition() const;
   Equipment Body() const;
@@ -29,12 +27,16 @@ public:
   Equipment Ring() const;
   Equipment Shield() const;
   Weapon    GetWeapon() const;
-  Monster   GetMonster() const;
 
 protected:
   void InitializeComboBoxes();
+  void PopulateSetup();
 
   Database *m_db;
+  Setup *m_setup;
+
+  Gtk::Label m_titleLabel;
+  Gtk::Grid m_grid;
 
   SearchableComboBox<Equipment> *m_ammoCombo,
                                 *m_bodyCombo,
@@ -48,15 +50,14 @@ protected:
                                 *m_shieldCombo;
 
   SearchableComboBox<Weapon>    *m_weaponCombo;
-  SearchableComboBox<Monster>   *m_monsterCombo;
 
   StanceComboBox *m_stanceCombo;
 
-  sigc::signal<void, DB_TYPE_E::Type> m_equipment_changed;
-  sigc::signal<void, int> m_stance_changed;
-
-  void on_stance_change(int i_stanceIndex);
   void on_equipment_change(DB_TYPE_E::Type i_type);
+  void on_weapon_change();
+  void on_stance_change(int i_stanceIndex);
+
+  sigc::signal<void> m_signal_setup_update;
 };
 
 #endif

@@ -47,6 +47,11 @@ void StanceComboBox::PopulateComboBox()
   }
 }
 
+int StanceComboBox::StanceIndex() const
+{
+  return m_stanceIndex;
+}
+
 void StanceComboBox::on_combo_changed()
 {
   Gtk::TreeModel::iterator it = m_combo.get_active();

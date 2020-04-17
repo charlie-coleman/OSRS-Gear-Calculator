@@ -3,24 +3,33 @@
 
 #include <gtkmm.h>
 #include "Player.h"
+#include "Monster.h"
+#include "Database.h"
+#include "Setup.h"
+#include "SearchableComboBox.h"
 #include "LevelEntry.h"
 
 class PlayerUI : public Gtk::Box
 {
 public:
-  PlayerUI(std::string i_title);
+  PlayerUI(std::string i_title, Database *i_db, Setup **i_setups, int i_setupCount);
   virtual ~PlayerUI();
 
   Player GetPlayer() const;
+  Monster GetMonster() const;
 
-  sigc::signal<void> signal_player_changed();
+  sigc::signal<void> signal_all_setups_changed();
 
 protected:
+  Database *m_db;
+  Setup **m_setups;
+  int m_setupCount;
+
   Player m_player;
 
-  Gtk::Grid m_grid;
+  Gtk::Grid m_playerGrid, m_monsterGrid;
 
-  Gtk::Label m_title, m_levelHeader, m_potionHeader, m_prayerHeader;
+  Gtk::Label m_playerTitle, m_monsterTitle, m_levelHeader, m_potionHeader, m_prayerHeader;
 
   LevelEntry *m_attackEntry,
              *m_strengthEntry,
@@ -30,6 +39,8 @@ protected:
              *m_prayerEntry,
              *m_hitpointsEntry,
              *m_currentHitpointsEntry;
+
+  SearchableComboBox<Monster> *m_monsterCombo;
 
   void on_attack_changed(int i_level),
        on_strength_changed(int i_level),
@@ -50,11 +61,13 @@ protected:
        ranged_prayer_changed(int i_prayer),
        magic_prayer_changed(int i_prayer);
 
+  void on_monster_changed();
 
+  sigc::signal<void> m_signal_all_setups_changed;
 
-  sigc::signal<void> m_signal_player_changed;
-
+  void UpdateSetupPlayer();
   void InitializeEntries();
+  void InitializeExtras();
 };
 
 #endif

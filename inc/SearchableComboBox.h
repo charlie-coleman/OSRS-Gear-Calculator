@@ -2,24 +2,22 @@
 #define SEARCHABLE_COMBOBOX_H
 
 #include "gtkmm.h"
-#include "enums.h"
 #include <vector>
 
 template <class T>
 class SearchableComboBox
 {
 public:
-  SearchableComboBox(Gtk::Grid* i_grid, int i_row, std::string i_labelStr, std::vector<T> i_db, DB_TYPE_E::Type i_type);
+  SearchableComboBox(Gtk::Grid* i_grid, int i_row, std::string i_labelStr, std::vector<T> i_db);
   virtual ~SearchableComboBox();
 
   T Selected() const;
 
-  sigc::signal<void, DB_TYPE_E::Type> signal_selected_change();
+  sigc::signal<void> signal_selected_change();
 
 protected:
   std::vector<T> m_db;
   T m_selectedItem;
-  DB_TYPE_E::Type m_type;
 
   Gtk::Label m_label;
   Gtk::ComboBox m_combo;
@@ -53,7 +51,7 @@ protected:
 
   bool on_completion_selection(const Gtk::TreeModel::iterator& iter);
 
-  sigc::signal<void, DB_TYPE_E::Type> m_selected_change;
+  sigc::signal<void> m_selected_change;
 };
 
 #endif

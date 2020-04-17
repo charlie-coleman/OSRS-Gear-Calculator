@@ -19,11 +19,8 @@ public:
 protected:
   void InitializeSetup();
 
-  void on_player_changed();
-  
-  void on_equipment_changed(DB_TYPE_E::Type i_type, int i_setupIndex);
-  
-  void on_stance_changed(int i_stanceIndex, int i_setupIndex);
+  void on_all_setups_changed();
+  void on_setup_update(int i_setupIndex);
 
   static const int SETUP_COUNT = 2;
 

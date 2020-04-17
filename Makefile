@@ -1,4 +1,5 @@
-CC = gcc
+LINUX_CC = gcc
+WINDOWS_CC = x86_64-w64-mingw32-gcc
 CFLAGs = -g \
 				 -pthread \
 				 -I/usr/include/gtkmm-3.0 \
@@ -72,4 +73,14 @@ CLIBS = -lgtkmm-3.0 \
 OUTPUT = ./out/OSRS-Gear-Calculator
 
 all:
-	$(CC) $(CFLAGs) $(TARGET) $(CLIBS) -o $(OUTPUT)
+	make linux
+	make windows
+
+linux:
+	$(LINUX_CC) $(CFLAGs) $(TARGET) $(CLIBS) -o $(OUTPUT)
+
+linux-debug:
+	$(LINUX_CC) $(CFLAGs) $(TARGET) $(CLIBS) -o $(OUTPUT)D -ggdb3
+
+windows:
+	$(WINDOWS_CC) $(CFLAGs) $(TARGET) $(CLIBS) -o $(OUTPUT).exe

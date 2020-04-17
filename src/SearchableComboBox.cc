@@ -9,10 +9,9 @@
 #include "Monster.h"
 
 template <class T>
-SearchableComboBox<T>::SearchableComboBox(Gtk::Grid* i_grid, int i_row, std::string i_labelStr, std::vector<T> i_db, DB_TYPE_E::Type i_type)
+SearchableComboBox<T>::SearchableComboBox(Gtk::Grid* i_grid, int i_row, std::string i_labelStr, std::vector<T> i_db)
   : m_label{i_labelStr},
-    m_combo(true),
-    m_type(i_type)
+    m_combo(true)
 {
   static_assert(std::is_base_of<Thing, T>::value, "T is not of base class Thing");
   m_db = i_db;
@@ -48,8 +47,15 @@ SearchableComboBox<T>::SearchableComboBox(Gtk::Grid* i_grid, int i_row, std::str
 
   m_combo.signal_changed().connect(sigc::mem_fun(*this, &SearchableComboBox<T>::on_combo_changed));
 
-  i_grid->attach(m_label, 0, i_row);
-  i_grid->attach(m_combo, 1, i_row);
+  if (i_labelStr.compare("") == 0)
+  {
+    i_grid->attach(m_combo, 0, i_row);
+  }
+  else
+  {
+    i_grid->attach(m_label, 0, i_row);
+    i_grid->attach(m_combo, 1, i_row);
+  }
 }
 
 template <class T>
@@ -102,7 +108,7 @@ void SearchableComboBox<T>::on_combo_changed()
       m_selectedItem = m_db[index];
     }
 
-    m_selected_change.emit(m_type);
+    m_selected_change.emit();
   }
 }
 
@@ -194,7 +200,7 @@ std::string SearchableComboBox<T>::ToLower(std::string i_str)
 }
 
 template <class T>
-sigc::signal<void, DB_TYPE_E::Type> SearchableComboBox<T>::signal_selected_change()
+sigc::signal<void> SearchableComboBox<T>::signal_selected_change()
 {
   return m_selected_change;
 }
